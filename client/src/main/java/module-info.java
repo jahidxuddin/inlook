@@ -10,6 +10,7 @@ module de.ju.client {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires com.fazecast.jSerialComm;
 
     opens de.ju.client to javafx.fxml;
     exports de.ju.client;

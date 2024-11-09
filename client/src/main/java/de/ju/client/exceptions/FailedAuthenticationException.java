@@ -1,4 +1,4 @@
-package exceptions;
+package de.ju.client.exceptions;
 
 public class FailedAuthenticationException extends Exception{
 

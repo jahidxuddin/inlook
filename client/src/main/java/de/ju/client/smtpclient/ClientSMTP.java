@@ -1,25 +1,28 @@
-package smtp.client;
+package de.ju.client.smtpclient;
 
-import exceptions.FailedAuthenticationException;
-import exceptions.FailedConnectionException;
-import tools.GetLocalIP;
+
+
+
+import de.ju.client.exceptions.FailedAuthenticationException;
+import de.ju.client.exceptions.FailedConnectionException;
+import de.ju.client.tools.GetLocalIP;
 import socketio.Socket;
 
-import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.util.Base64;
 
-public class clientSMTP {
+import static java.lang.StringTemplate.STR;
+
+public class ClientSMTP {
     private Socket cSocket;
     private final String HELO = "HELO";
     private final String AUTH = "AUTH LOGIN";
     private final String MAILFROM = "MAIL FROM";
-    private String RCPTTO = "RCPT TO"
+    private String RCPTTO = "RCPT TO";
     private String username;
     private String password;
 
-    public clientSMTP(String hostname, int port, String username, String password){
+    public ClientSMTP(String hostname, int port, String username, String password){
         try {
             cSocket = new Socket(hostname, port);
         } catch (IOException e) {
@@ -113,6 +116,11 @@ public class clientSMTP {
 
     public void startSMTPSession() throws FailedConnectionException, IOException {
         connect();
+
+    }
+
+    public static void main(String[] args) {
+        ClientSMTP clientSMTP = new ClientSMTP("a", 22, "wwa", "niger");
 
     }
 }

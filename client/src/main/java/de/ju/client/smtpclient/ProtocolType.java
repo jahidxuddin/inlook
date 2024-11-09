@@ -1,4 +1,4 @@
-package smtp.client;
+package de.ju.client.smtpclient;
 
 public enum ProtocolType {
 

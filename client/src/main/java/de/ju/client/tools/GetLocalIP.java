@@ -1,11 +1,8 @@
-package tools;
+package de.ju.client.tools;
 
 import java.net.*;
 
-public abstract class GetLocalIP {
-    public static void main(String[] args) {
-    }
-
+public class GetLocalIP {
 
     public static String getIP() throws UnknownHostException{
         try {

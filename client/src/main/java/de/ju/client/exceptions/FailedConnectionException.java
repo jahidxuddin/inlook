@@ -1,4 +1,4 @@
-package exceptions;
+package de.ju.client.exceptions;
 
 // Define a custom checked exception
 public class FailedConnectionException extends Exception {
