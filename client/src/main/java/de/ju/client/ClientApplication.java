@@ -12,8 +12,7 @@ public class ClientApplication extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("MainView.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("E-Mail Client");
-        primaryStage.setMaximized(true);
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setScene(new Scene(root, 1100, 750));
         primaryStage.show();
     }
 
