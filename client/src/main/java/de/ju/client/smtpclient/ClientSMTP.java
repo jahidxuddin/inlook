@@ -1,8 +1,5 @@
 package de.ju.client.smtpclient;
 
-
-
-
 import de.ju.client.exceptions.FailedAuthenticationException;
 import de.ju.client.exceptions.FailedConnectionException;
 import de.ju.client.tools.GetLocalIP;
@@ -113,6 +110,7 @@ public class ClientSMTP {
         }
 
     }
+
 
     public void startSMTPSession() throws FailedConnectionException, IOException {
         connect();

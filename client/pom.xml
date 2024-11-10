@@ -51,7 +51,8 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>
-                C:/Users/moll/Documents/vs-projects/e-mail-server/client/Serial-1.2.jar            </systemPath>
+                Serial-1.2.jar
+            </systemPath>
         </dependency>
         <dependency>
             <groupId>com.dlsc.formsfx</groupId>
