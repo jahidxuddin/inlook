@@ -51,7 +51,7 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>
-                Serial-1.2.jar
+                ${project.basedir}/libs/Serial-1.2.jar
             </systemPath>
         </dependency>
         <dependency>
