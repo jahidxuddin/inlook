@@ -24,9 +24,11 @@ public class SMTPClient {
     }
 
     public void authenticate(String password) throws FailedAuthenticationException, FailedConnectionException {
-        if (sendAndCheck("AUTH LOGIN", "334 VXNlcm5hbWU6") || sendAndCheck(encodeBase64(this.email), "334 UGFzc3dvcmQ6")) {
+        System.out.println("Authenticate");
+        if (sendAndCheck("AUTH LOGIN", "334") || sendAndCheck(encodeBase64(this.email), "334")) {
             throw new FailedAuthenticationException("Authentication initiation failed or username rejected");
         }
+        System.out.println("authenticated");
         String response = sendCommand(encodeBase64(password));
         if (response.startsWith("535")) throw new FailedAuthenticationException("Invalid authentication credentials");
         if (!response.startsWith("235"))
@@ -34,12 +36,12 @@ public class SMTPClient {
     }
 
     public void sendMail(String to, String subject, String body) throws FailedConnectionException {
-        if (!sendAndCheck("MAIL FROM: <" + this.email + ">", "250"))
+        if (sendAndCheck("MAIL FROM:<" + this.email + ">", "250"))
             throw new FailedConnectionException("Failed to set sender address");
-        if (!sendAndCheck("RCPT TO: <" + to + ">", "250"))
+        if (sendAndCheck("RCPT TO:<" + to + ">", "250"))
             throw new FailedConnectionException("Failed to set recipient address");
-        if (!sendAndCheck("DATA", "354")) throw new FailedConnectionException("Failed to start message data input");
-        if (!sendAndCheck("Subject: " + subject + "\r\n\r\n" + body + "\r\n.", "250"))
+        if (sendAndCheck("DATA", "354")) throw new FailedConnectionException("Failed to start message data input");
+        if (sendAndCheck("Subject: " + subject + "\r\n\r\n" + body + "\r\n.", "250"))
             throw new FailedConnectionException("Failed to send message body");
     }
 
@@ -50,8 +52,12 @@ public class SMTPClient {
 
     private String sendCommand(String command) throws FailedConnectionException {
         try {
-            this.socket.write(command);
-            return this.socket.readLine();
+            String temp = "";
+            this.socket.write(command + "\n");
+                 temp = this.socket.readLine();
+            System.out.println(command);
+            System.out.println("TEMP: " + temp);
+            return temp;
         } catch (IOException e) {
             throw new FailedConnectionException("Failed to communicate with the server", e);
         }
@@ -61,13 +67,5 @@ public class SMTPClient {
         return Base64.getEncoder().encodeToString(input.getBytes());
     }
 
-    public static void main(String[] args) {
-        try {
-            SMTPClient smtpClient = new SMTPClient("localhost", 1234, "john.pork@fls-wiesbaden.de");
-            smtpClient.authenticate("password");
-            smtpClient.sendMail("abishan.arankesan@outlook.de", "TEST", "Among Us");
-        } catch (FailedConnectionException | FailedAuthenticationException e) {
-            throw new RuntimeException(e);
-        }
     }
-}
+

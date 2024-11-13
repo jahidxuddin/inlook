@@ -17,6 +17,18 @@ public class Email {
         this.body = body;
     }
 
+    public String getSender() {
+        return sender;
+    }
+
+    public String getRecipient() {
+        return recipient;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
     @Override
     public String toString() {
         return "From: " + sender + "\nTo: " + recipient + "\nBody:\n" + body;

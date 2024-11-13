@@ -23,30 +23,34 @@ public class SMTPServer {
             sSocket = new ServerSocket(port);
             cSocket = sSocket.accept();
             cSocket.write("220 smtp.example.com ESMTP Service Ready");
+            System.out.println("connected!");
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void process() {
-        while (true) {
-            try {
-                greeting();
-                if (!authenticated) {
-                    auth();
-                }
-                mailCreation();
-            } catch (IOException e) {
-                e.printStackTrace();
+    public void process() throws IOException {
+        try {
+            greeting();
+            while (!authenticated) {
+                System.out.println("in dich rein");
+                auth();
+                System.out.println("in dich raus");
             }
+            mailCreation();
+        } catch (IOException e) {
+            throw new IOException();
         }
+
     }
 
     public void greeting() throws IOException {
-        String temp;
+        String temp = "";
         while (cSocket.dataAvailable() <= 0) ;
+        System.out.println("sex");
         temp = cSocket.readLine();
+        System.out.println("hallo");
         System.out.println("C: " + temp);
         if (temp.startsWith("EHLO") || temp.startsWith("HELO")) {
             cSocket.write("250-" + name + " Hello " + temp.substring(5) + "\n");
@@ -57,7 +61,9 @@ public class SMTPServer {
         String temp;
         while (cSocket.dataAvailable() <= 0) ;
         temp = cSocket.readLine();
+        System.out.println(temp);
         if (temp.startsWith("AUTH LOGIN")) {
+            System.out.println("AUTH login empfangen");
             cSocket.write("334 VXNlcm5hbWU6\n");
             String tempUser = new String(Base64.getDecoder().decode(cSocket.readLine()));
             cSocket.write("334 UGFzc3dvcmQ6\n");
@@ -74,14 +80,19 @@ public class SMTPServer {
     public void mailCreation() throws IOException {
         Email tempEmail = new Email();
         String temp;
-        while (cSocket.dataAvailable() <= 0) ;
         while (true) {
+            System.out.println("again!!!: " + cSocket.dataAvailable());
+            while (cSocket.dataAvailable() <= 0);
+            System.out.println(cSocket.dataAvailable());
             temp = cSocket.readLine();
-            if (authenticated && temp.startsWith("MAIL FROM")) {
-                tempEmail.setSender(temp.substring(10));
+            if (authenticated && temp.startsWith("MAIL FROM:")) {
+                System.out.println("mail from");
+                tempEmail.setSender(temp.substring(9));
+                System.out.println(tempEmail.getSender());
                 cSocket.write("250 OK\n");
-            } else if (authenticated && temp.startsWith("RCPT TO")) {
+            } else if (authenticated && temp.startsWith("RCPT TO:")) {
                 tempEmail.setRecipient(temp.substring(8));
+                System.out.println(tempEmail.getRecipient());
                 cSocket.write("250 OK\n");
             } else if (authenticated && temp.startsWith("DATA")) {
                 tempEmail.setBody(temp.substring(5));
@@ -94,7 +105,7 @@ public class SMTPServer {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         SMTPServer smtpServer = new SMTPServer();
         smtpServer.process();
     }
