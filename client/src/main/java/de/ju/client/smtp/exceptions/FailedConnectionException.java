@@ -1,4 +1,4 @@
-package de.ju.client.exceptions;
+package de.ju.client.smtp.exceptions;
 
 // Define a custom checked exception
 public class FailedConnectionException extends Exception {

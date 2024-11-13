@@ -1,4 +1,4 @@
-package de.ju.client.exceptions;
+package de.ju.client.smtp.exceptions;
 
 public class FailedAuthenticationException extends Exception{
 
