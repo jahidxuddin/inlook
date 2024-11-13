@@ -4,109 +4,136 @@ import de.ju.server.networking.ServerSocket;
 import de.ju.server.networking.Socket;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class SMTPServer {
-    private static final List<Email> emails = new ArrayList<>();
-    private ServerSocket sSocket;
-    private Socket cSocket;
-    private final String name = "smtp.server.com";
-    private final String expectedUser = "testuser";
-    private final String expectedPassword = "testpassword";
-    private boolean authenticated = false;
+    private final ServerSocket serverSocket;
+    private final Queue<Socket> clientQueue;
+    private final String serverDomain;
+    private volatile boolean isRunning;
 
-    public SMTPServer() {
+    public SMTPServer(int port, String serverDomain) {
         try {
-            int port = 1234;
-            sSocket = new ServerSocket(port);
-            cSocket = sSocket.accept();
-            cSocket.write("220 smtp.example.com ESMTP Service Ready");
-            System.out.println("connected!");
-
+            this.serverSocket = new ServerSocket(port);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+        this.clientQueue = new LinkedList<>();
+        this.serverDomain = serverDomain;
+        this.isRunning = false;
     }
 
-    public void process() throws IOException {
-        try {
-            greeting();
-            while (!authenticated) {
-                System.out.println("in dich rein");
-                auth();
-                System.out.println("in dich raus");
+    public void run() {
+        Thread clientListener = new Thread(this::listenForClients);
+        Thread clientHandler = new Thread(this::handleClients);
+
+        this.isRunning = true;
+        clientListener.start();
+        clientHandler.start();
+    }
+
+    private void listenForClients() {
+        while (isRunning) {
+            try {
+                Socket client = this.serverSocket.accept();
+                this.clientQueue.add(client);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            mailCreation();
-        } catch (IOException e) {
-            throw new IOException();
-        }
-
-    }
-
-    public void greeting() throws IOException {
-        String temp = "";
-        while (cSocket.dataAvailable() <= 0) ;
-        System.out.println("sex");
-        temp = cSocket.readLine();
-        System.out.println("hallo");
-        System.out.println("C: " + temp);
-        if (temp.startsWith("EHLO") || temp.startsWith("HELO")) {
-            cSocket.write("250-" + name + " Hello " + temp.substring(5) + "\n");
         }
     }
 
-    public void auth() throws IOException {
-        String temp;
-        while (cSocket.dataAvailable() <= 0) ;
-        temp = cSocket.readLine();
-        System.out.println(temp);
-        if (temp.startsWith("AUTH LOGIN")) {
-            System.out.println("AUTH login empfangen");
-            cSocket.write("334 VXNlcm5hbWU6\n");
-            String tempUser = new String(Base64.getDecoder().decode(cSocket.readLine()));
-            cSocket.write("334 UGFzc3dvcmQ6\n");
-            String tempPassword = new String(Base64.getDecoder().decode(cSocket.readLine()));
-            if (tempUser.equalsIgnoreCase(expectedUser) && tempPassword.equals(expectedPassword)) {
-                cSocket.write("235 Authentication successful\n");
-                authenticated = true;
+    private void handleClients() {
+        while (isRunning) {
+            Socket client = this.clientQueue.poll();
+            if (client != null) {
+                new Thread(() -> handleClient(client)).start();
+            }
+        }
+    }
+
+    private void handleClient(Socket client) {
+        try {
+            client.write("220 " + this.serverDomain + " ESMTP Service Ready");
+
+            if (!waitForData(client, 5000)) return;
+            String response = client.readLine();
+            if (response.startsWith("EHLO") || response.startsWith("HELO")) {
+                client.write("250-" + this.serverDomain + " Hello " + response.substring(5) + "\n");
+            }
+
+            if (!waitForData(client, 5000) || !client.readLine().startsWith("AUTH LOGIN")) return;
+            client.write("334 VXNlcm5hbWU6\n");
+
+            if (!waitForData(client, 5000)) return;
+            String clientEmail = decodeBase64(client.readLine());
+            client.write("334 UGFzc3dvcmQ6\n");
+
+            if (!waitForData(client, 5000)) return;
+            String clientPassword = decodeBase64(client.readLine());
+
+            if ("username".equals(clientEmail) && "password".equals(clientPassword)) {
+                client.write("235 Authentication successful\n");
             } else {
-                cSocket.write("Authentication failed\n");
+                client.write("535 Authentication failed\n");
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
+    private boolean waitForData(Socket client, long timeoutMillis) throws IOException {
+        long startTime = System.currentTimeMillis();
+        while (client.dataAvailable() <= 0) {
+            if (System.currentTimeMillis() - startTime > timeoutMillis) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String decodeBase64(String encoded) {
+        return new String(Base64.getDecoder().decode(encoded));
+    }
+
+    public static void main(String[] args) {
+        SMTPServer smtpServer = new SMTPServer(1234, "smtp.example.com");
+        smtpServer.run();
+    }
+}
+
+/* TODO: Integrate this algorithm
     public void mailCreation() throws IOException {
         Email tempEmail = new Email();
-        String temp;
         while (true) {
-            System.out.println("again!!!: " + cSocket.dataAvailable());
-            while (cSocket.dataAvailable() <= 0);
-            System.out.println(cSocket.dataAvailable());
-            temp = cSocket.readLine();
+            while (this.socket.dataAvailable() <= 0) ;
+            String temp = this.socket.readLine();
             if (authenticated && temp.startsWith("MAIL FROM:")) {
                 System.out.println("mail from");
                 tempEmail.setSender(temp.substring(9));
                 System.out.println(tempEmail.getSender());
-                cSocket.write("250 OK\n");
+                this.socket.write("250 OK\n");
             } else if (authenticated && temp.startsWith("RCPT TO:")) {
                 tempEmail.setRecipient(temp.substring(8));
                 System.out.println(tempEmail.getRecipient());
-                cSocket.write("250 OK\n");
+                this.socket.write("250 OK\n");
             } else if (authenticated && temp.startsWith("DATA")) {
                 tempEmail.setBody(temp.substring(5));
                 emails.add(tempEmail);
-                cSocket.write("250 OK: Message Accepted\n");
+                this.socket.write("250 OK: Message Accepted\n");
             } else if (temp.equals("QUIT")) {
-                cSocket.write("221 Bye\n");
+                this.socket.write("221 Bye\n");
                 break;
             }
         }
     }
-
-    public static void main(String[] args) throws IOException {
-        SMTPServer smtpServer = new SMTPServer();
-        smtpServer.process();
-    }
-}
+*/

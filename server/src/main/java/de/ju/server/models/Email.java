@@ -1,32 +1,32 @@
-package de.ju.server;
+package de.ju.server.models;
 
 public class Email {
     private String sender;
     private String recipient;
     private String body;
 
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-
-    public void setRecipient(String recipient) {
-        this.recipient = recipient;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
     public String getSender() {
         return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     public String getRecipient() {
         return recipient;
     }
 
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
+    }
+
     public String getBody() {
         return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
     @Override
