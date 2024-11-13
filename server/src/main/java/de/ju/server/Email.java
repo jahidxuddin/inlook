@@ -1,3 +1,5 @@
+package de.ju.server;
+
 public class Email {
     private String sender;
     private String recipient;

@@ -1,14 +1,15 @@
-import socketio.ServerSocket;
-import socketio.Socket;
+package de.ju.server;
+
+import de.ju.server.networking.ServerSocket;
+import de.ju.server.networking.Socket;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-public class ServerSMTP {
-    private int port = 1234;
-    private static final List<Email> emails = new ArrayList<Email>();
+public class SMTPServer {
+    private static final List<Email> emails = new ArrayList<>();
     private ServerSocket sSocket;
     private Socket cSocket;
     private final String name = "smtp.server.com";
@@ -16,8 +17,9 @@ public class ServerSMTP {
     private final String expectedPassword = "testpassword";
     private boolean authenticated = false;
 
-    public ServerSMTP() {
+    public SMTPServer() {
         try {
+            int port = 1234;
             sSocket = new ServerSocket(port);
             cSocket = sSocket.accept();
             cSocket.write("220 smtp.example.com ESMTP Service Ready");
@@ -41,9 +43,9 @@ public class ServerSMTP {
         }
     }
 
-    public void greeting() throws IOException{
+    public void greeting() throws IOException {
         String temp;
-        while (cSocket.dataAvailable() <= 0);
+        while (cSocket.dataAvailable() <= 0) ;
         temp = cSocket.readLine();
         System.out.println("C: " + temp);
         if (temp.startsWith("EHLO") || temp.startsWith("HELO")) {
@@ -51,9 +53,9 @@ public class ServerSMTP {
         }
     }
 
-    public void auth() throws IOException{
+    public void auth() throws IOException {
         String temp;
-        while (cSocket.dataAvailable() <= 0);
+        while (cSocket.dataAvailable() <= 0) ;
         temp = cSocket.readLine();
         if (temp.startsWith("AUTH LOGIN")) {
             cSocket.write("334 VXNlcm5hbWU6\n");
@@ -69,10 +71,10 @@ public class ServerSMTP {
         }
     }
 
-    public void mailCreation() throws IOException{
+    public void mailCreation() throws IOException {
         Email tempEmail = new Email();
         String temp;
-        while (cSocket.dataAvailable() <= 0);
+        while (cSocket.dataAvailable() <= 0) ;
         while (true) {
             temp = cSocket.readLine();
             if (authenticated && temp.startsWith("MAIL FROM")) {
@@ -93,8 +95,7 @@ public class ServerSMTP {
     }
 
     public static void main(String[] args) {
-        ServerSMTP serverSMTP = new ServerSMTP();
-        serverSMTP.process();
+        SMTPServer smtpServer = new SMTPServer();
+        smtpServer.process();
     }
 }
-

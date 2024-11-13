@@ -1,8 +1,8 @@
 package de.ju.client.smtp;
 
+import de.ju.client.networking.Socket;
 import de.ju.client.smtp.exceptions.FailedAuthenticationException;
 import de.ju.client.smtp.exceptions.FailedConnectionException;
-import socketio.Socket;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -12,17 +12,13 @@ public class SMTPClient {
     private final String email;
 
     public SMTPClient(String hostname, int port, String email) throws FailedConnectionException {
-        try {
-            this.socket = new Socket(hostname, port);
-            this.email = email;
-            initiateConnection();
-        } catch (IOException e) {
-            throw new FailedConnectionException("Failed to connect to the email server", e);
-        }
+        this.socket = new Socket(hostname, port);
+        this.email = email;
+        initiateConnection();
     }
 
     private void initiateConnection() throws FailedConnectionException {
-        if (!this.socket.connect() || sendAndCheck("HELO " + this.email, "250")) {
+        if (!this.socket.connect() || !sendAndCheck("HELO " + this.email, "250")) {
             throw new FailedConnectionException("Connection initiation failed: server did not respond as expected.");
         }
     }
@@ -63,5 +59,15 @@ public class SMTPClient {
 
     private String encodeBase64(String input) {
         return Base64.getEncoder().encodeToString(input.getBytes());
+    }
+
+    public static void main(String[] args) {
+        try {
+            SMTPClient smtpClient = new SMTPClient("localhost", 1234, "john.pork@fls-wiesbaden.de");
+            smtpClient.authenticate("password");
+            smtpClient.sendMail("abishan.arankesan@outlook.de", "TEST", "Among Us");
+        } catch (FailedConnectionException | FailedAuthenticationException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
