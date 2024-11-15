@@ -31,7 +31,6 @@ public class SMTPClient {
         if (response.startsWith("535")) throw new FailedAuthenticationException("Invalid authentication credentials");
         if (!response.startsWith("235"))
             throw new FailedAuthenticationException("Unexpected response during authentication: " + response);
-        System.out.println("CLIENT AUTHENTICATED");
     }
 
     public void sendMail(String to, String subject, String body) throws FailedConnectionException {
@@ -42,6 +41,8 @@ public class SMTPClient {
         if (sendAndCheck("DATA", "354")) throw new FailedConnectionException("Failed to start message data input");
         if (sendAndCheck("Subject: " + subject + "\r\n\r\n" + body + "\r\n.", "250"))
             throw new FailedConnectionException("Failed to send message body");
+        if (sendAndCheck("QUIT", "250"))
+            throw new FailedConnectionException("Failed to send quit");
     }
 
     private boolean sendAndCheck(String command, String expectedStart) throws FailedConnectionException {
@@ -52,6 +53,7 @@ public class SMTPClient {
     private String sendCommand(String command) throws FailedConnectionException {
         try {
             this.socket.write(command + "\n");
+            while (this.socket.dataAvailable() <= 0);
             return this.socket.readLine();
         } catch (IOException e) {
             throw new FailedConnectionException("Failed to communicate with the server", e);
@@ -66,7 +68,7 @@ public class SMTPClient {
         try {
             SMTPClient smtpClient = new SMTPClient("localhost", 1234, "username");
             smtpClient.authenticate("password");
-            // smtpClient.sendMail("abishan.arankesan@outlook.de", "TEST", "Among Us");
+            smtpClient.sendMail("tim.tester@gmail.com", "Tim Test", "Tim testet");
         } catch (FailedConnectionException | FailedAuthenticationException e) {
             throw new RuntimeException(e);
         }

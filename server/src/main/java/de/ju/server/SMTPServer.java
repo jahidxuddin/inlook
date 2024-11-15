@@ -4,9 +4,7 @@ import de.ju.server.networking.ServerSocket;
 import de.ju.server.networking.Socket;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class SMTPServer {
     private final ServerSocket serverSocket;
@@ -78,6 +76,32 @@ public class SMTPServer {
                 client.write("235 Authentication successful\n");
             } else {
                 client.write("535 Authentication failed\n");
+                return;
+            }
+
+            Map<String, String> mailCreationClientCommands = new LinkedHashMap<>();
+            mailCreationClientCommands.put("MAIL FROM:", "250 OK");
+            mailCreationClientCommands.put("RCPT TO:", "250 OK");
+            mailCreationClientCommands.put("DATA", "354 OK");
+            mailCreationClientCommands.put("Subject:", "250 OK");
+            mailCreationClientCommands.put("QUIT", "250 Bye");
+            for (Map.Entry<String, String> item : mailCreationClientCommands.entrySet()) {
+                String command = item.getKey();
+                String responseMessage = item.getValue();
+
+                if (command.equals("QUIT")) {
+                    System.out.println(command);
+                    client.write(responseMessage + "\n");
+                    break;
+                }
+
+                if (!waitForData(client, 5000)) break;
+                response = client.readLine();
+
+                if (!response.startsWith(command)) break;
+                String data = response.substring(command.length());
+                System.out.println(command + " " + data);
+                client.write(responseMessage + "\n");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -110,30 +134,3 @@ public class SMTPServer {
         smtpServer.run();
     }
 }
-
-/* TODO: Integrate this algorithm
-    public void mailCreation() throws IOException {
-        Email tempEmail = new Email();
-        while (true) {
-            while (this.socket.dataAvailable() <= 0) ;
-            String temp = this.socket.readLine();
-            if (authenticated && temp.startsWith("MAIL FROM:")) {
-                System.out.println("mail from");
-                tempEmail.setSender(temp.substring(9));
-                System.out.println(tempEmail.getSender());
-                this.socket.write("250 OK\n");
-            } else if (authenticated && temp.startsWith("RCPT TO:")) {
-                tempEmail.setRecipient(temp.substring(8));
-                System.out.println(tempEmail.getRecipient());
-                this.socket.write("250 OK\n");
-            } else if (authenticated && temp.startsWith("DATA")) {
-                tempEmail.setBody(temp.substring(5));
-                emails.add(tempEmail);
-                this.socket.write("250 OK: Message Accepted\n");
-            } else if (temp.equals("QUIT")) {
-                this.socket.write("221 Bye\n");
-                break;
-            }
-        }
-    }
-*/
