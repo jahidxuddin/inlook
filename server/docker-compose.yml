@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: email_server_db
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_USER: user
+      MYSQL_PASSWORD: admin123

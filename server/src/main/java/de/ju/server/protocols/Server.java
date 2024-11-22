@@ -1,4 +1,4 @@
-package de.ju.server;
+package de.ju.server.protocols;
 
 import de.ju.server.networking.ServerSocket;
 import de.ju.server.networking.Socket;
@@ -48,12 +48,28 @@ public abstract class Server {
         while (isRunning) {
             Socket client = this.clientQueue.poll();
             if (client != null) {
-                new Thread(() -> handleClient(client)).start();
+                new Thread(() -> {
+                    try {
+                        handleClient(client);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        cleanUpClient(client);
+                    }
+                }).start();
             }
         }
     }
 
-    protected abstract void handleClient(Socket client);
+    protected abstract void handleClient(Socket client) throws IOException;
+
+    private void cleanUpClient(Socket client) {
+        try {
+            client.close();
+        } catch (IOException e) {
+            System.err.println("Error closing client connection: " + e.getMessage());
+        }
+    }
 
     protected boolean waitForData(Socket client, long timeoutMillis) throws IOException {
         long startTime = System.currentTimeMillis();
