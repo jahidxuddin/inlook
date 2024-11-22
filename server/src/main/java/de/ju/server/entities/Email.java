@@ -7,6 +7,8 @@ public class Email {
     private String subject;
     private String body;
 
+    private byte size;
+
     public Email() {
     }
 
@@ -56,6 +58,23 @@ public class Email {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public byte getSize() {
+        return size;
+    }
+
+    public void setSize(byte size) {
+        this.size = size;
+    }
+
+    public byte calcSize() {
+        String content = sender + recipient + subject + body;
+        byte byteSum = 0;
+        for (byte x : content.getBytes()) {
+            byteSum += x;
+        }
+        return byteSum;
     }
 
     @Override

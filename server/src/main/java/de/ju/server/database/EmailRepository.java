@@ -29,12 +29,13 @@ public class EmailRepository {
     }
 
     public void storeEmail(Email email) {
-        String query = "INSERT INTO Emails (sender, recipient, subject, body) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO Emails (sender, recipient, subject, body, size) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseConnector.getInstance().getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, email.getSender());
             preparedStatement.setString(2, email.getRecipient());
             preparedStatement.setString(3, email.getSubject());
             preparedStatement.setString(4, email.getBody());
+            preparedStatement.setByte(5, email.calcSize());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
