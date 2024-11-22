@@ -60,7 +60,9 @@
             </Button>
             <Button prefHeight="25.0" prefWidth="50.0"
                     style="-fx-font-size: 24px; -fx-background-color: #0078d4; -fx-background-radius: 50%; -fx-text-fill: white;"
-                    text="+">
+                    text="+"
+                    onAction="#showEmailComposer"
+            >
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>

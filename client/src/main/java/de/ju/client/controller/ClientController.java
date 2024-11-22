@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -12,6 +13,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class ClientController {
     @FXML
@@ -30,30 +34,7 @@ public class ClientController {
     private VBox emailContentArea;
 
     private void loadEmails() {
-        ObservableList<Email> emails = FXCollections.observableArrayList(
-                new Email("Intervieweinladung: Marketing-Manager Position", "marcus.fischer22@careers.com", "22.11.2024"),
-                new Email("Probleme beim Versand der letzten Bestellung", "thomas.hartmann21@shopservice.com", "21.11.2024"),
-                new Email("Kostenlose Webinare für den kommenden Monat", "claudia.martin20@events.com", "20.11.2024"),
-                new Email("Überarbeitete Version des Marketingplans", "daniela.schmidt19@marketingteam.com", "19.11.2024"),
-                new Email("Wichtige Änderungen der Datenschutzbestimmungen", "lars.petersen18@privacy.com", "18.11.2024"),
-                new Email("Überarbeitung der Arbeitszeiten: Feedback erbeten", "julia.hoffmann17@hr.com", "17.11.2024"),
-                new Email("Verschiebung des Meetings auf nächste Woche", "tobias.lang16@consulting.net", "16.11.2024"),
-                new Email("Verbesserungen am Dashboard", "helena.schreiber15@productteam.com", "15.11.2024"),
-                new Email("Neue Partnerschaft mit Innovators Inc.", "patrick.koch14@partnerships.com", "14.11.2024"),
-                new Email("Woche der offenen Tür - Einladung", "katja.stein13@marketing.de", "13.11.2024"),
-                new Email("Fragen zu den aktuellen Rechnungen", "michael.bauer12@finance.org", "12.11.2024"),
-                new Email("Update: Neue Funktionen in der App", "sandra.reiter11@mobiletech.com", "11.11.2024"),
-                new Email("E-Mail-Archivierung: Wie Sie Daten sicher aufbewahren", "oliver.becker10@itservice.com", "10.11.2024"),
-                new Email("Bestellung für Bürobedarf: Lieferung erwartet", "nina.wagner9@office.de", "09.11.2024"),
-                new Email("Neue Öffnungszeiten ab nächster Woche", "mario.schneider8@shop.com", "08.11.2024"),
-                new Email("Jahresbericht 2024: Erste Entwürfe", "lena.koch7@firma.org", "07.11.2024"),
-                new Email("Erinnerung: Abgabe der Projektberichte bis Freitag", "benjamin.schulz6@consulting.de", "06.11.2024"),
-                new Email("Feedback zum neuen Design-Entwurf", "anna.mueller5@designstudio.com", "05.11.2024"),
-                new Email("Urlaubsantrag für Dezember", "clara.meier4@unternehmen.com", "04.11.2024"),
-                new Email("Wichtige Sicherheitsupdates für Ihre Software", "luca.schmidt3@tech.org", "03.11.2024"),
-                new Email("Neuigkeiten zur Produktveröffentlichung", "julia.musterfrau2@web.de", "02.11.2024"),
-                new Email("Meeting am Montag: Besprechung zur Projektstrategie", "max.mustermann1@firma.com", "01.11.2024")
-        );
+        ObservableList<Email> emails = FXCollections.observableArrayList(new Email("Intervieweinladung: Marketing-Manager Position", "marcus.fischer22@careers.com", "22.11.2024"), new Email("Probleme beim Versand der letzten Bestellung", "thomas.hartmann21@shopservice.com", "21.11.2024"), new Email("Kostenlose Webinare für den kommenden Monat", "claudia.martin20@events.com", "20.11.2024"), new Email("Überarbeitete Version des Marketingplans", "daniela.schmidt19@marketingteam.com", "19.11.2024"), new Email("Wichtige Änderungen der Datenschutzbestimmungen", "lars.petersen18@privacy.com", "18.11.2024"), new Email("Überarbeitung der Arbeitszeiten: Feedback erbeten", "julia.hoffmann17@hr.com", "17.11.2024"), new Email("Verschiebung des Meetings auf nächste Woche", "tobias.lang16@consulting.net", "16.11.2024"), new Email("Verbesserungen am Dashboard", "helena.schreiber15@productteam.com", "15.11.2024"), new Email("Neue Partnerschaft mit Innovators Inc.", "patrick.koch14@partnerships.com", "14.11.2024"), new Email("Woche der offenen Tür - Einladung", "katja.stein13@marketing.de", "13.11.2024"), new Email("Fragen zu den aktuellen Rechnungen", "michael.bauer12@finance.org", "12.11.2024"), new Email("Update: Neue Funktionen in der App", "sandra.reiter11@mobiletech.com", "11.11.2024"), new Email("E-Mail-Archivierung: Wie Sie Daten sicher aufbewahren", "oliver.becker10@itservice.com", "10.11.2024"), new Email("Bestellung für Bürobedarf: Lieferung erwartet", "nina.wagner9@office.de", "09.11.2024"), new Email("Neue Öffnungszeiten ab nächster Woche", "mario.schneider8@shop.com", "08.11.2024"), new Email("Jahresbericht 2024: Erste Entwürfe", "lena.koch7@firma.org", "07.11.2024"), new Email("Erinnerung: Abgabe der Projektberichte bis Freitag", "benjamin.schulz6@consulting.de", "06.11.2024"), new Email("Feedback zum neuen Design-Entwurf", "anna.mueller5@designstudio.com", "05.11.2024"), new Email("Urlaubsantrag für Dezember", "clara.meier4@unternehmen.com", "04.11.2024"), new Email("Wichtige Sicherheitsupdates für Ihre Software", "luca.schmidt3@tech.org", "03.11.2024"), new Email("Neuigkeiten zur Produktveröffentlichung", "julia.musterfrau2@web.de", "02.11.2024"), new Email("Meeting am Montag: Besprechung zur Projektstrategie", "max.mustermann1@firma.com", "01.11.2024"));
         this.emailListView.setItems(emails);
     }
 
@@ -191,5 +172,101 @@ public class ClientController {
                 Sincerely,
                 
                 The Banking.com Support Team""");
+    }
+
+    @FXML
+    private void showEmailComposer() {
+        // Erstelle ein neues Stage (Popup)
+        Stage composerStage = new Stage();
+        composerStage.initModality(Modality.APPLICATION_MODAL); // Blockiert andere Fenster
+        composerStage.setTitle("Compose Email");
+        composerStage.setResizable(false);
+
+        // UI-Elemente ohne Labels
+        TextField receiverField = new TextField();
+        receiverField.setPromptText("Recipient's email address");
+
+        TextArea messageArea = new TextArea();
+        messageArea.setPromptText("Type your message here...");
+        messageArea.setWrapText(true);
+
+        // Toolbar-like HBox für die Buttons (wie im Bild)
+        Button sendButton = new Button("Senden");
+        sendButton.setStyle("-fx-background-color: #1a73e8; -fx-text-fill: white; -fx-font-size: 14px;");
+        sendButton.setOnAction(e -> {
+            String receiverEmail = receiverField.getText();
+            String message = messageArea.getText();
+            if (receiverEmail.isEmpty() || message.isEmpty()) {
+                showAlert("Validation Error", "Please fill in all required fields.");
+            } else {
+                System.out.println("Email sent to: " + receiverEmail);
+                System.out.println("Message: " + message);
+                composerStage.close();
+            }
+        });
+
+        Button formattingButton = new Button("A"); // Formatierungs-Button (z.B. für Schriftarten)
+        formattingButton.setStyle("-fx-font-size: 18px; -fx-background-color: transparent;");
+
+        Button attachButton = new Button("📎"); // Büroklammer für Anhänge
+        attachButton.setStyle("-fx-font-size: 18px; -fx-background-color: transparent;");
+        attachButton.setOnAction(e -> {
+            // Datei-Dialog öffnen
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select Attachment");
+            fileChooser.showOpenDialog(composerStage);
+        });
+
+        Button emojiButton = new Button("😊"); // Smileys
+        emojiButton.setStyle("-fx-font-size: 18px; -fx-background-color: transparent;");
+
+        Button warningButton = new Button("⚠️"); // Warnhinweis-Button
+        warningButton.setStyle("-fx-font-size: 18px; -fx-background-color: transparent;");
+
+        Button imageButton = new Button("🖼️"); // Bild einfügen-Button
+        imageButton.setStyle("-fx-font-size: 18px; -fx-background-color: transparent;");
+
+        Button moreButton = new Button("⋯"); // Weitere Optionen
+        moreButton.setStyle("-fx-font-size: 18px; -fx-background-color: transparent;");
+
+        Button deleteButton = new Button("🗑️"); // Löschen-Button
+        deleteButton.setStyle("-fx-font-size: 18px; -fx-background-color: transparent;");
+
+        // Alle Buttons in eine HBox (Toolbar)
+        HBox toolbar = new HBox(10);
+        toolbar.getChildren().addAll(
+                sendButton, formattingButton, attachButton, emojiButton, warningButton, imageButton, moreButton, deleteButton
+        );
+        toolbar.setStyle("-fx-background-color: #f1f3f4; -fx-padding: 5px;");
+
+        // Layout mit allen Elementen
+        VBox composerLayout = new VBox(10); // 10px Abstand zwischen den Elementen
+        composerLayout.getChildren().addAll(
+                receiverField,
+                messageArea,
+                toolbar
+        );
+
+        composerLayout.setStyle("-fx-padding: 20;");
+
+        Scene composerScene = new Scene(composerLayout);
+        composerStage.setScene(composerScene);
+
+        // Positioniere das Fenster unten rechts
+        composerStage.setOnShown(event -> {
+            Stage primaryStage = (Stage) splitPane.getScene().getWindow(); // Hauptfenster
+            composerStage.setX(primaryStage.getX() + primaryStage.getWidth() - composerStage.getWidth() - 20);
+            composerStage.setY(primaryStage.getY() + primaryStage.getHeight() - composerStage.getHeight() - 20);
+        });
+
+        composerStage.show();
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
