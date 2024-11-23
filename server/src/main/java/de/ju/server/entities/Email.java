@@ -60,10 +60,6 @@ public class Email {
         this.body = body;
     }
 
-    public byte getSize() {
-        return size;
-    }
-
     public void setSize(byte size) {
         this.size = size;
     }

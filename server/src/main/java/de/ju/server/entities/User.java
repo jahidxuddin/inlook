@@ -11,6 +11,12 @@ public class User {
         this.password = password;
     }
 
+    public User(User user) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+    }
+
     public int getId() {
         return id;
     }

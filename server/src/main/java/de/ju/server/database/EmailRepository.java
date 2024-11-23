@@ -28,6 +28,17 @@ public class EmailRepository {
         }
     }
 
+    public Email getEmailById(int id) {
+        String query = "SELECT * FROM Emails WHERE id = (?)";
+        try (Connection connection = DatabaseConnector.getInstance().getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query); ResultSet resultSet = preparedStatement.executeQuery()) {
+            preparedStatement.setString(1, Integer.toString(id));
+            Email email = new Email(resultSet.getInt("id"), resultSet.getString("sender"), resultSet.getString("recipient"), resultSet.getString("subject"), resultSet.getString("body"));
+            return email;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
     public void storeEmail(Email email) {
         String query = "INSERT INTO Emails (sender, recipient, subject, body, size) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseConnector.getInstance().getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -50,4 +61,57 @@ public class EmailRepository {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean deleteEmail(int id) {
+        String query1 = "DELETE FROM Emails WHERE id = (?)";
+        String query2 = "DELETE FROM UserEmails WHERE email_id = (?)";
+
+        Connection connection = null;
+        try {
+            connection = DatabaseConnector.getInstance().getConnection();
+            connection.setAutoCommit(false);  // Deaktiviert Auto-Commit für Transaktionen
+
+            // Erstelle PreparedStatements
+            try (PreparedStatement preparedStatement1 = connection.prepareStatement(query1);
+                 PreparedStatement preparedStatement2 = connection.prepareStatement(query2)) {
+
+                // Setze Parameter für die erste Query
+                preparedStatement1.setInt(1, id);
+
+                // Setze Parameter für die zweite Query
+                preparedStatement2.setInt(1, id);
+
+                // Führe beide Queries aus
+                preparedStatement1.executeUpdate();
+                preparedStatement2.executeUpdate();
+
+                // Commit der Transaktion
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();  // Rollback der Transaktion bei einem Fehler
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true);  // Stelle den Auto-Commit wieder her
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return true;  // Alle Queries wurden erfolgreich ausgeführt
+    }
+
+
 }
+
