@@ -1,6 +1,4 @@
 module de.ju.client {
-    requires javafx.controls;
-    requires javafx.fxml;
     requires javafx.web;
 
     requires org.controlsfx.controls;
@@ -10,6 +8,7 @@ module de.ju.client {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires MaterialFX;
 
     opens de.ju.client to javafx.fxml;
     exports de.ju.client;

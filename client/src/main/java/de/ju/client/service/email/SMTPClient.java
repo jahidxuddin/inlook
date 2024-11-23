@@ -1,8 +1,8 @@
-package de.ju.client.smtp;
+package de.ju.client.service.email;
 
-import de.ju.client.networking.Socket;
-import de.ju.client.smtp.exceptions.FailedAuthenticationException;
-import de.ju.client.smtp.exceptions.FailedConnectionException;
+import de.ju.client.service.email.networking.Socket;
+import de.ju.client.service.email.exceptions.FailedAuthenticationException;
+import de.ju.client.service.email.exceptions.FailedConnectionException;
 
 import java.io.IOException;
 import java.util.Base64;
