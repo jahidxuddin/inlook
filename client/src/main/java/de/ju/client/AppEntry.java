@@ -16,19 +16,8 @@ public class AppEntry extends Application {
         showAccountView(primaryStage);
     }
 
-    private void showHomeView(Stage primaryStage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/views/HomeView.fxml"));
-        Parent root = loader.load();
-        primaryStage.setTitle("hotfemail.com - Home");
-        primaryStage.setScene(new Scene(root, 1024, 720));
-        primaryStage.setMinWidth(1024);
-        primaryStage.setMinHeight(720);
-        primaryStage.setMaximized(true);
-        primaryStage.show();
-    }
-
     private void showAccountView(Stage primaryStage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/views/AccountView.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/view/AccountView.fxml"));
         Parent modalRoot = loader.load();
         Stage modalStage = new Stage();
         modalStage.initModality(Modality.APPLICATION_MODAL);

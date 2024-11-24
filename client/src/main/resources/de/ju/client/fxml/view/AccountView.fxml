@@ -20,19 +20,29 @@
         <!-- Profile Section -->
         <VBox alignment="TOP_CENTER" spacing="20">
             <!-- Welcome Text -->
-            <Text fx:id="welcomeText" text="jahid.uddin@truyou.com"
-                  style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-            <!-- Manage Account Button -->
-            <MFXButton text="Hotfemail Konto verwalten"
-                       style="-fx-background-color: #E8F0FE;
+            <Text fx:id="currentAccountEmail" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER">
+                <!-- Manage Account Button (Secondary) -->
+                <MFXButton text="Hotfemail Konto verwalten"
+                           onAction="#onManageAccoutButton"
+                           style="-fx-background-color: #E8F0FE;
                               -fx-text-fill: #1A73E8;
                               -fx-border-radius: 20;"/>
+                <!-- Dashboard Redirect Button (Primary) -->
+                <MFXButton text="Zum Dashboard"
+                           onAction="#onRedirectToDashboard"
+                           style="-fx-background-color: #1A73E8;
+                  -fx-text-fill: #FFFFFF;
+                  -fx-border-radius: 20;
+                  -fx-font-weight: bold;"/>
+            </HBox>
         </VBox>
 
         <!-- Account List Section -->
-        <VBox style="-fx-padding: 24px 0px 12px 0px" spacing="15" alignment="CENTER_LEFT" prefWidth="400.0" prefHeight="200.0">
+        <VBox style="-fx-padding: 24px 0px 12px 0px" spacing="15" alignment="CENTER_LEFT" prefWidth="400.0"
+              prefHeight="200.0">
             <!-- Accounts Heading -->
-            <Text text="Weitere Konten" style="-fx-font-size: 14; -fx-fill: #707070;"/>
+            <Text fx:id="accountsHeading" text="Weitere Konten" style="-fx-font-size: 14; -fx-fill: #707070;"/>
             <!-- List of Accounts -->
             <MFXListView fx:id="accountListView" prefHeight="200.0" prefWidth="400.0"/>
         </VBox>
@@ -40,12 +50,12 @@
         <!-- Add Account and Logout Section -->
         <VBox spacing="15" alignment="BOTTOM_CENTER" prefWidth="400.0">
             <MFXButton text="Weiteres Konto hinzufügen"
-                       fx:id="addAccountButton"
+                       onAction="#onAddAccount"
                        style="-fx-background-color: #F1F3F4;
                               -fx-text-fill: #3C4043;
                               -fx-border-radius: 20;"/>
             <MFXButton text="Von allen Konten abmelden"
-                       fx:id="logoutButton"
+                       onAction="#onLogoutAll"
                        style="-fx-background-color: transparent;
                               -fx-text-fill: #1A73E8;
                               -fx-font-weight: bold;"/>

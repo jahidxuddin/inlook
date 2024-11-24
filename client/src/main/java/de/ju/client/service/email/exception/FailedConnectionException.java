@@ -1,4 +1,4 @@
-package de.ju.client.service.email.exceptions;
+package de.ju.client.service.email.exception;
 
 public class FailedConnectionException extends Exception {
     public FailedConnectionException(String message) {

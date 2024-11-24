@@ -1,8 +1,8 @@
 package de.ju.client.service.email;
 
 import de.ju.client.service.email.networking.Socket;
-import de.ju.client.service.email.exceptions.FailedAuthenticationException;
-import de.ju.client.service.email.exceptions.FailedConnectionException;
+import de.ju.client.service.email.exception.FailedAuthenticationException;
+import de.ju.client.service.email.exception.FailedConnectionException;
 
 import java.io.IOException;
 import java.util.Base64;
