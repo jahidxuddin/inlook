@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="overlay"
+      fx:controller="de.ju.client.controller.ManageAccountOverlayController"
+      alignment="TOP_CENTER"
+>
+    <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 12px;">
+        <!-- Back Button -->
+        <MFXButton
+                text=""
+                style="-fx-background-color: transparent;"
+                onAction="#closeOverlay">
+            <graphic>
+                <MFXFontIcon
+                        color="#1A73E8"
+                        description="fas-arrow-left"
+                        size="22"
+                />
+            </graphic>
+        </MFXButton>
+
+        <!-- Overlay Text -->
+        <Text text="Konto verwalten"
+              style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox>

@@ -1,30 +1,22 @@
 package de.ju.client.controller;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
+import de.ju.client.ui.Overlay;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.effects.DepthLevel;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Optional;
-
-import static de.ju.client.lib.Overlay.removeOverlay;
-import static de.ju.client.lib.Overlay.showOverlay;
 
 public class AccountController {
     @FXML
@@ -49,23 +41,8 @@ public class AccountController {
 
     @FXML
     private void onManageAccoutButton(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        showOverlay(stage, (StackPane pane) -> {
-            javafx.scene.text.Text overlayText = new javafx.scene.text.Text("Konto verwalten");
-            overlayText.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-
-            MFXButton closeOverlayButton = new MFXButton("");
-            closeOverlayButton.setStyle("-fx-background-color: transparent;");
-            closeOverlayButton.setGraphic(new MFXFontIcon("fas-arrow-left", 22).setColor(new Color(0.102, 0.451, 0.910, 1.0)));
-            closeOverlayButton.setOnAction(_ -> removeOverlay(stage, pane));
-
-            HBox hBox = new HBox(5);
-            hBox.setStyle("-fx-padding: 12px;");
-            hBox.setAlignment(Pos.CENTER_LEFT);
-            hBox.getChildren().addAll(closeOverlayButton, overlayText);
-
-            pane.getChildren().add(hBox);
-        });
+        Overlay overlay = new Overlay((Node) event.getSource(), "/de/ju/client/fxml/overlay/ManageAccountOverlay.fxml");
+        overlay.showOverlay((Node) event.getSource());
     }
 
     @FXML
@@ -91,23 +68,8 @@ public class AccountController {
 
     @FXML
     private void onAddAccount(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        showOverlay(stage, (StackPane pane) -> {
-            javafx.scene.text.Text overlayText = new javafx.scene.text.Text("Konto hinzufügen");
-            overlayText.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-
-            MFXButton closeOverlayButton = new MFXButton("");
-            closeOverlayButton.setStyle("-fx-background-color: transparent;");
-            closeOverlayButton.setGraphic(new MFXFontIcon("fas-arrow-left", 22).setColor(new Color(0.102, 0.451, 0.910, 1.0)));
-            closeOverlayButton.setOnAction(_ -> removeOverlay(stage, pane));
-
-            HBox hBox = new HBox(5);
-            hBox.setStyle("-fx-padding: 12px;");
-            hBox.setAlignment(Pos.CENTER_LEFT);
-            hBox.getChildren().addAll(closeOverlayButton, overlayText);
-
-            pane.getChildren().add(hBox);
-        });
+        Overlay overlay = new Overlay((Node) event.getSource(), "/de/ju/client/fxml/overlay/AddAccountOverlay.fxml");
+        overlay.showOverlay((Node) event.getSource());
     }
 
     @FXML
