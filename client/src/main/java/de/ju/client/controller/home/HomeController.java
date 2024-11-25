@@ -1,4 +1,4 @@
-package de.ju.client.controller;
+package de.ju.client.controller.home;
 
 import javafx.fxml.FXML;
 

@@ -1,11 +1,11 @@
-package de.ju.client.controller;
+package de.ju.client.controller.account;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-public class AddAccountOverlayController {
+public class ManageAccountOverlayController {
     public VBox overlay;
 
     @FXML

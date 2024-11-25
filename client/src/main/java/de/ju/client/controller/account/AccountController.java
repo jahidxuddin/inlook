@@ -1,6 +1,6 @@
-package de.ju.client.controller;
+package de.ju.client.controller.account;
 
-import de.ju.client.ui.Overlay;
+import de.ju.client.lib.Overlay;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.effects.DepthLevel;
 import javafx.collections.ListChangeListener;
@@ -35,7 +35,11 @@ public class AccountController {
             // Toggle the visibility of the accountsHeading based on the size of the list
             accountsHeading.setVisible(!accountListView.getItems().isEmpty());
         });
-        // Initial check to handle preloaded items
+        accountListView.getSelectionModel().selectionProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                currentAccountEmail.setText(newValue.values().stream().toList().getFirst());
+            }
+        });
         accountsHeading.setVisible(!accountListView.getItems().isEmpty());
     }
 
