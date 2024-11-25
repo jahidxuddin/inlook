@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class AccountController {
+    private Overlay manageAccountOverlay;
+    private Overlay addAccountOverlay;
     @FXML
     private Text currentAccountEmail;
     @FXML
@@ -28,6 +30,8 @@ public class AccountController {
 
     @FXML
     public void initialize() {
+        manageAccountOverlay = new Overlay("/de/ju/client/fxml/overlay/ManageAccountOverlay.fxml");
+        addAccountOverlay = new Overlay("/de/ju/client/fxml/overlay/AddAccountOverlay.fxml");
         currentAccountEmail.setText("jahid.uddin@hotfemail.com");
         accountListView.setDepthLevel(DepthLevel.LEVEL0);
         accountListView.getItems().addAll("user1@hotfemail.com", "user2@hotfemail.com", "user3@hotfemail.com", "user4@hotfemail.com", "user5@hotfemail.com");
@@ -45,8 +49,7 @@ public class AccountController {
 
     @FXML
     private void onManageAccoutButton(ActionEvent event) {
-        Overlay overlay = new Overlay((Node) event.getSource(), "/de/ju/client/fxml/overlay/ManageAccountOverlay.fxml");
-        overlay.showOverlay((Node) event.getSource());
+        manageAccountOverlay.showOverlay((Node) event.getSource());
     }
 
     @FXML
@@ -72,8 +75,7 @@ public class AccountController {
 
     @FXML
     private void onAddAccount(ActionEvent event) {
-        Overlay overlay = new Overlay((Node) event.getSource(), "/de/ju/client/fxml/overlay/AddAccountOverlay.fxml");
-        overlay.showOverlay((Node) event.getSource());
+        addAccountOverlay.showOverlay((Node) event.getSource());
     }
 
     @FXML

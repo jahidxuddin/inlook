@@ -10,11 +10,11 @@ import java.io.IOException;
 public class Overlay {
     private final Pane overlay;
 
-    public Overlay(Node anyNode, String fxmlPath) {
-        this.overlay = createOverlay(anyNode, fxmlPath);
+    public Overlay(String fxmlPath) {
+        this.overlay = createOverlay(fxmlPath);
     }
 
-    private Pane createOverlay(Node anyNode, String fxmlPath) {
+    private Pane createOverlay(String fxmlPath) {
         Pane overlay;
         try {
             FXMLLoader loader = new FXMLLoader(Overlay.class.getResource(fxmlPath));
@@ -24,10 +24,11 @@ public class Overlay {
         }
 
         overlay.setStyle("-fx-background-color: rgba(255, 255, 255, 1);");
+        /*
         overlay.setPrefSize(
                 anyNode.getScene().getWindow().getWidth(),
                 anyNode.getScene().getWindow().getHeight()
-        );
+        );*/
 
         return overlay;
     }

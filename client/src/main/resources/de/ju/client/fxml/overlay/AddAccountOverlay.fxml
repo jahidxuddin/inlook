@@ -9,6 +9,7 @@
       fx:id="overlay"
       fx:controller="de.ju.client.controller.account.AddAccountOverlayController"
       alignment="TOP_CENTER"
+      prefWidth="400.0" prefHeight="500.0"
 >
     <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 12px;">
         <!-- Back Button -->
