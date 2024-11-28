@@ -1,4 +1,4 @@
-package de.ju.client.lib;
+package de.ju.client.lib.ui;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;

@@ -24,7 +24,7 @@
             <HBox spacing="10" alignment="CENTER">
                 <!-- Manage Account Button (Secondary) -->
                 <MFXButton text="Hotfemail Konto verwalten"
-                           onAction="#onManageAccoutButton"
+                           onAction="#onManageAccount"
                            style="-fx-background-color: #E8F0FE;
                               -fx-text-fill: #1A73E8;
                               -fx-border-radius: 20;"/>

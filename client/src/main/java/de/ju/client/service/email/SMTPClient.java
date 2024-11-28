@@ -1,6 +1,6 @@
 package de.ju.client.service.email;
 
-import de.ju.client.service.email.networking.Socket;
+import de.ju.client.lib.networking.Socket;
 import de.ju.client.service.email.exception.FailedAuthenticationException;
 import de.ju.client.service.email.exception.FailedConnectionException;
 

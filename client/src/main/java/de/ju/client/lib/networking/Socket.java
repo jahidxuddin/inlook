@@ -1,4 +1,4 @@
-package de.ju.client.service.email.networking;
+package de.ju.client.lib.networking;
 
 import java.io.BufferedReader;
 import java.io.IOException;
