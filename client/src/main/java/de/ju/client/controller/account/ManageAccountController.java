@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-public class ManageAccountOverlayController {
+public class ManageAccountController {
     public VBox overlay;
 
     @FXML

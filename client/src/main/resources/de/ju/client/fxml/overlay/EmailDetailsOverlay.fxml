@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.mfxcore.controls.Text?>
+<?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.text.TextFlow?>
+
+<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="overlay"
+      fx:controller="de.ju.client.controller.home.EmailDetailsController"
+      alignment="TOP_CENTER"
+      prefWidth="1024.0" prefHeight="720"
+>
+    <!-- Back Button and Title -->
+    <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 24px;">
+        <MFXButton
+                text=""
+                style="-fx-background-color: transparent;"
+                onAction="#closeOverlay">
+            <graphic>
+                <MFXFontIcon
+                        color="#1A73E8"
+                        description="fas-arrow-left"
+                        size="22"
+                />
+            </graphic>
+        </MFXButton>
+
+        <Text fx:id="details" text="E-Mail lesen"
+              style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <!-- Email Details Section -->
+    <VBox spacing="10" style="-fx-padding: 0px 48px 48px 48px;">
+        <Label fx:id="subjectText" style="-fx-font-weight: bold; -fx-font-size: 24px;"/>
+        <MFXScrollPane fitToWidth="true" style="-fx-padding: 10; -fx-border-width: 0; -fx-border-color: #fff;">
+            <TextFlow>
+                <Text fx:id="contentText" style="-fx-font-size: 16px;"/>
+            </TextFlow>
+        </MFXScrollPane>
+    </VBox>
+</VBox>

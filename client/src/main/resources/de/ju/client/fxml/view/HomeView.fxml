@@ -1,9 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXListView?>
+<?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
+<?import javafx.scene.layout.*?>
+<?import io.github.palexdev.mfxcore.controls.Label?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="de.ju.client.controller.home.HomeController"
-            prefHeight="1024.0" prefWidth="720.0">
+            prefHeight="720.0" prefWidth="1024.0"
+            style="-fx-background: #fff;">
+    <!-- Top Bar -->
+    <HBox
+            AnchorPane.topAnchor="0.0"
+            AnchorPane.leftAnchor="0.0"
+            AnchorPane.rightAnchor="0.0"
+            alignment="CENTER_LEFT"
+            style="-fx-padding: 24px;">
 
+        <!-- Left Button: Write Button -->
+        <MFXButton
+                text=""
+                HBox.hgrow="ALWAYS"
+                onAction="#onComposeEmail"
+                style="-fx-background-color: #E8F0FE; -fx-text-fill: #1A73E8; -fx-border-radius: 20; -fx-font-size: 14px; -fx-padding: 10px 15px 10px 15px; -fx-border-radius: 5px;">
+
+            <graphic>
+                <HBox spacing="10">
+                    <MFXFontIcon
+                            color="#1A73E8"
+                            description="fas-pen"
+                            size="20"/>
+                    <Label text="Schreiben"
+                           style="-fx-text-fill: #1A73E8; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+                </HBox>
+            </graphic>
+        </MFXButton>
+
+        <!-- Spacer (pushes the next button to the right) -->
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Right Button: Account Icon -->
+        <MFXButton
+                text=""
+                style="-fx-background-color: transparent;"
+                onAction="#onAccountView"
+                HBox.hgrow="ALWAYS">
+            <graphic>
+                <MFXFontIcon
+                        color="#1A73E8"
+                        description="fas-circle-user"
+                        size="32"
+                />
+            </graphic>
+        </MFXButton>
+    </HBox>
+
+    <!-- Email List View -->
+    <MFXListView fx:id="emailListView"
+                 style="-fx-font-size: 18px; -fx-padding: 22px;"
+                 AnchorPane.topAnchor="60.0"
+                 AnchorPane.bottomAnchor="20.0"
+                 AnchorPane.leftAnchor="20.0"
+                 AnchorPane.rightAnchor="20.0"/>
 </AnchorPane>

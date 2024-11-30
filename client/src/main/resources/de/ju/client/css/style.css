@@ -3,3 +3,18 @@
     -fx-padding: 10px;
     -fx-border-radius: 5px;
 }
+
+.mfx-list-view {
+    -fx-background-color: transparent;
+}
+
+.email-item {
+    -fx-background-color: white;
+    -fx-padding: 10;
+    -fx-border-color: lightgray;
+    -fx-border-width: 0 0 1 0;
+}
+
+.email-item:hover {
+    -fx-background-color: #f0f0f0;
+}

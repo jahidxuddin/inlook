@@ -16,4 +16,6 @@ module de.ju.client {
     opens de.ju.client.controller.account to javafx.fxml;
     exports de.ju.client.controller.home;
     opens de.ju.client.controller.home to javafx.fxml;
+    exports de.ju.client.service.email;
+    opens de.ju.client.service.email to javafx.fxml;
 }

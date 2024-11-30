@@ -57,26 +57,18 @@ public class AccountController {
 
     private void initializeAccountListView() {
         accountListView.setDepthLevel(DepthLevel.LEVEL0);
-        accountListView.getItems().addAll(
-                "user1@hotfemail.com",
-                "user2@hotfemail.com",
-                "user3@hotfemail.com",
-                "user4@hotfemail.com"
-        );
+        accountListView.getItems().addAll("user1@hotfemail.com", "user2@hotfemail.com", "user3@hotfemail.com", "user4@hotfemail.com");
     }
 
     private void setupAccountsHeadingVisibility() {
         accountsHeading.setVisible(!accountListView.getItems().isEmpty());
-        accountListView.getItems().addListener((ListChangeListener<String>) change ->
-                accountsHeading.setVisible(!accountListView.getItems().isEmpty())
-        );
+        accountListView.getItems().addListener((ListChangeListener<String>) change -> accountsHeading.setVisible(!accountListView.getItems().isEmpty()));
     }
 
     private void setupSelectionListener() {
         accountListView.getSelectionModel().selectionProperty().addListener((observable, oldValue, newValue) -> {
             String selectedEmail = accountListView.getSelectionModel().getSelectedValue();
             Platform.runLater(() -> {
-
                 if (selectedEmail != null) {
                     swapEmails(selectedEmail);
                 }
@@ -114,11 +106,9 @@ public class AccountController {
 
     private Stage createDashboardStage(Parent root) {
         Stage dashboardStage = new Stage();
-        dashboardStage.setTitle("hotfemail.com - Home");
+        dashboardStage.setTitle("Hotfemail - " + currentAccountEmail.getText().substring(0, currentAccountEmail.getText().indexOf("@")));
         dashboardStage.setScene(new Scene(root, 1024, 720));
-        dashboardStage.setMinWidth(1024);
-        dashboardStage.setMinHeight(720);
-        dashboardStage.setMaximized(true);
+        dashboardStage.setResizable(false);
         return dashboardStage;
     }
 
@@ -130,21 +120,21 @@ public class AccountController {
     @FXML
     private void onLogoutAll(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Logout");
-        alert.setHeaderText("Are you sure you want to log out all accounts?");
-        alert.setContentText("This will log out all accounts currently active.");
+        alert.setTitle("Abmeldung bestätigen");
+        alert.setHeaderText("Sind Sie sicher, dass Sie alle Konten abmelden möchten?");
+        alert.setContentText("Dadurch werden alle derzeit aktiven Konten abgemeldet.");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             logoutAllAccounts();
         } else {
-            System.out.println("Logout canceled.");
+            System.out.println("Abmeldung abgebrochen.");
         }
     }
 
     private void logoutAllAccounts() {
-        // Actual logout logic goes here
-        System.out.println("All users have been logged out!");
+        // Die tatsächliche Abmeldelogik wird hier eingefügt
+        System.out.println("Alle Benutzer wurden abgemeldet!");
     }
 
     private void showErrorDialog(String title, String message) {
