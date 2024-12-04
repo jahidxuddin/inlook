@@ -8,8 +8,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class EmailDetailsController {
+    private volatile boolean running = true;
+    private Thread workerThread;
     private Email emailData;
 
     @FXML
@@ -23,8 +26,15 @@ public class EmailDetailsController {
 
     @FXML
     public void initialize() {
-        new Thread(() -> {
-            while (true) {
+        overlay.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                Stage stage = (Stage) overlay.getScene().getWindow();
+                stage.setOnCloseRequest(event -> stopWorkerThread());
+            }
+        });
+
+        workerThread = new Thread(() -> {
+            while (running) {
                 Object userData = overlay.getUserData();
                 if (emailData != userData) {
                     Platform.runLater(() -> {
@@ -37,10 +47,23 @@ public class EmailDetailsController {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException();
+                    running = false;
+                    Thread.currentThread().interrupt();
                 }
             }
-        }).start();
+        });
+        workerThread.start();
+    }
+
+    private void setStage(Stage stage) {
+        stage.setOnCloseRequest(event -> stopWorkerThread());
+    }
+
+    public void stopWorkerThread() {
+        running = false;
+        if (workerThread != null && workerThread.isAlive()) {
+            workerThread.interrupt();
+        }
     }
 
     @FXML

@@ -9,6 +9,7 @@ module de.ju.client {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires MaterialFX;
+    requires com.fasterxml.jackson.databind;
 
     opens de.ju.client to javafx.fxml;
     exports de.ju.client;
