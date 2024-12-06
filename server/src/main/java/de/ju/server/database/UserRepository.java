@@ -26,7 +26,6 @@ public class UserRepository {
         }
     }
 
-
     public void storeUser(String email, String password) {
         String query = "INSERT INTO Users (email, password) VALUES (?, ?)";
         try (Connection connection = DatabaseConnector.getInstance().getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {

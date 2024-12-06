@@ -51,54 +51,26 @@ public class EmailRepository {
         }
     }
 
-    public boolean deleteEmail(int id) {
-        String query1 = "DELETE FROM Emails WHERE id = (?)";
-        String query2 = "DELETE FROM UserEmails WHERE email_id = (?)";
-
-        Connection connection = null;
-        try {
-            connection = DatabaseConnector.getInstance().getConnection();
-            connection.setAutoCommit(false);  // Deaktiviert Auto-Commit für Transaktionen
-
-            // Erstelle PreparedStatements
-            try (PreparedStatement preparedStatement1 = connection.prepareStatement(query1);
-                 PreparedStatement preparedStatement2 = connection.prepareStatement(query2)) {
-
-                // Setze Parameter für die erste Query
-                preparedStatement1.setInt(1, id);
-
-                // Setze Parameter für die zweite Query
-                preparedStatement2.setInt(1, id);
-
-                // Führe beide Queries aus
-                preparedStatement1.executeUpdate();
-                preparedStatement2.executeUpdate();
-
-                // Commit der Transaktion
-                connection.commit();
-            }
+    public void deleteEmail(int id) {
+        String query = "DELETE FROM Emails WHERE id = ?";
+        try (Connection connection = DatabaseConnector.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            connection.setAutoCommit(false); // Deaktiviert Auto-Commit für Transaktionen
+            // Setze den Parameter und führe die Query aus
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            // Commit der Transaktion
+            connection.commit();
         } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();  // Rollback der Transaktion bei einem Fehler
-                } catch (SQLException rollbackEx) {
-                     System.out.println(rollbackEx.getMessage());
+            System.err.println("Fehler beim Löschen der E-Mail: " + e.getMessage());
+            try (Connection connection = DatabaseConnector.getInstance().getConnection()) {
+                if (connection != null && !connection.getAutoCommit()) {
+                    connection.rollback();
                 }
-            }
-             System.out.println(e.getMessage());
-            return false;
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.setAutoCommit(true);  // Stelle den Auto-Commit wieder her
-                    connection.close();
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
+            } catch (SQLException rollbackEx) {
+                System.err.println("Rollback-Fehler: " + rollbackEx.getMessage());
             }
         }
-
-        return true;  // Alle Queries wurden erfolgreich ausgeführt
     }
 }
 
