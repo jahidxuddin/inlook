@@ -9,28 +9,13 @@ import de.ju.server.networking.Socket;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
-
-//Cursor resting area
-//_________________
-//|               |
-//|               |
-//|               |
-//|_______________|
 public class POP3Server extends Server {
-    private static final String OK_RESPONSE = "+OK";
-    private static final String GREETING_REQUEST = "+OK POP3 Server Ready";
-    private final String USER = "USER";
-    private final String PASS = "PASS";
-    private Integer num_message;
-    private byte size_message;
+    private static final String OK_RESPONSE = "+OK\n";
+    private static final String GREETING_REQUEST = "+OK POP3 Server Ready\n";
+
     private final EmailRepository emailRepository;
     private final UserRepository userRepository;
-    private User currentUser;
-    List<Integer> emailsPrepredForDeletion = new ArrayList<>();
-
-
 
     public POP3Server(int port, String serverDomain, EmailRepository emailRepository, UserRepository userRepository) {
         super(port, serverDomain);
@@ -40,119 +25,98 @@ public class POP3Server extends Server {
 
     @Override
     protected void handleClient(Socket client) throws IOException {
-        if (!greetClient(client)) return;
-        if(!authenticateClient(client)) return;
-        processMailCommands(client);
+        greetClient(client);
+        User user = authenticateClient(client);
+        if (user == null) return;
+        processMailCommands(client, user);
     }
 
-    private void processMailCommands(Socket client) throws IOException {
-        while (true) {
-            String response = client.readLine();
-            String status = response.substring(0, 3);
-            int emailId;
-            if (!waitForData(client, 5000)) break;
-            switch (status) {
-                case "STAT" :
-                    client.write(OK_RESPONSE + " " + showStats());
-                break;
-                case "LIST" :
-                    client.write(OK_RESPONSE);
-                    client.write(list());
-                    client.write(".");
-                break;
-                case "RETR" :
-                    client.write(OK_RESPONSE + " " + retr(Integer.parseInt(response.substring(3))));
-                break;
-                case "DELE" :
-                    emailsPrepredForDeletion.add(Integer.parseInt(response.substring(3)));
-                break;
-                case "QUIT" :
-                    client.write(OK_RESPONSE);
-                    close();
-                break;
+    private void greetClient(Socket client) throws IOException {
+        client.write(GREETING_REQUEST);
+    }
+
+    private User authenticateClient(Socket client) throws IOException {
+        if (!waitForData(client, 5000)) return null;
+        String response = client.readLine();
+        if (!response.startsWith("USER")) return null;
+
+        String username = response.substring(5);
+        User user = userRepository.getUser(username);
+        if (user == null) return null;
+        client.write(OK_RESPONSE);
+
+        if (!waitForData(client, 5000)) return null;
+        response = client.readLine();
+        if (!response.startsWith("PASS")) return null;
+
+        String password = response.substring(5);
+        if (!user.getPassword().equals(password)) return null;
+        client.write(OK_RESPONSE);
+
+        return user;
+    }
+
+    private void processMailCommands(Socket client, User user) throws IOException {
+        List<Integer> emailsToDelete = new ArrayList<>();
+        while (waitForData(client, 5000)) {
+            String commandLine = client.readLine();
+            String status = commandLine.substring(0, 4).trim();
+            if (status.startsWith("STAT")) {
+                handleStat(client, user.getEmail());
+            } else if (status.startsWith("LIST")) {
+                handleList(client, user.getEmail());
+            } else if (status.startsWith("RETR")) {
+                String id = commandLine.substring(4).trim();
+                handleRetr(client, Integer.parseInt(id));
+            } else if (status.startsWith("DELE")) {
+                String id = commandLine.substring(4).trim();
+                handleDele(client, emailsToDelete, Integer.parseInt(id));
+            } else if (status.startsWith("QUIT")) {
+                handleQuit(client, emailsToDelete);
             }
         }
     }
 
-    public boolean emailFound(int id) {
-        if(emailRepository.getEmailById(id) != null) return true;
-        return false;
+    private void handleStat(Socket client, String userEmail) throws IOException {
+        List<Email> allEmails = emailRepository.getAllEmailsFromUser(userEmail);
+        int amountOfAllEmails = allEmails.size();
+
+        byte sizeOfAllEmail = 0;
+        for (Email email : allEmails) {
+            sizeOfAllEmail += email.calcSize();
+        }
+
+        client.write("+OK " + amountOfAllEmails + " " + sizeOfAllEmail + "\n");
     }
 
-    private String retr(int emailId) {
-        StringBuilder emailString = new StringBuilder();
+    private void handleList(Socket client, String userEmail) throws IOException {
+        client.write(OK_RESPONSE);
 
-        if (!emailFound(emailId)) return null;
+        List<Email> allEmails = emailRepository.getAllEmailsFromUser(userEmail);
+        for (Email email : allEmails) {
+            client.write(email.getId() + " " + email.calcSize() + "\n");
+        }
 
+        client.write(".\n");
+    }
+
+    private void handleRetr(Socket client, int emailId) throws IOException {
         Email email = emailRepository.getEmailById(emailId);
+        if (email == null) return;
 
-        // Daten mit StringBuilder aneinanderhängen
-        emailString.append(email.calcSize()).append(" octets\n")
-                .append("From: ").append(email.getSender()).append("\n")
-                .append("Recipient: ").append(email.getRecipient()).append("\n")
-                .append("Body: ").append(email.getBody());
-
-        return emailString.toString();
+        client.write("+OK " + email.calcSize() + " octets\n" + email + "\n.\n");
     }
 
-    private boolean delete(int emailId) {
-        if (!emailFound(emailId)) return false;
-        return emailRepository.deleteEmail(emailId);
-    }
-
-    private void close() {
-        for (Integer x : emailsPrepredForDeletion) {
-            delete(x);
-        }
-        //hier muss die verbindung ordnungsgemäß geschlossen werden/ kb zu machen!
-    }
-
-
-    private String list() {
-        List<Email> allEMails = emailRepository.getAllEmailsFromUser(currentUser.getEmail());
-        StringBuilder output = new StringBuilder();
-        for (Email e : allEMails) {
-            output.append(e.getId()).append(" ").append(e.calcSize()).append("\n");
-        }
-        return output.toString();
-    }
-
-
-    private String showStats() {
-        System.out.println();
-        List<Email> allEMails = emailRepository.getAllEmailsFromUser(currentUser.getEmail());
-        String output = Integer.toString(allEMails.size());
-        byte tempSize = 0;
-
-        // Normale for-Schleife
-        for (Email e : allEMails) {
-            tempSize += e.calcSize();
-        }
-
-        return output + " " + tempSize;
-    }
-
-
-    private boolean greetClient(Socket client) throws IOException {
-        client.write(String.format(GREETING_REQUEST, super.serverDomain));
-        return true;
-    }
-
-    private boolean authenticateClient(Socket client) throws IOException {
-        if (!waitForData(client, 5000)) return false;
-        String request = client.readLine();
-        String username = request.substring(4);
-        if (!request.startsWith(USER)) return false;
-        if (userRepository.getUser(username) == null) return false;
+    private void handleDele(Socket client, List<Integer> emailsToDelete, int emailId) throws IOException {
+        emailsToDelete.add(emailId);
         client.write(OK_RESPONSE);
+    }
 
-        if (!waitForData(client, 5000)) return false;
-        request = client.readLine();
-        String password = request.substring(4);
-        if (!request.startsWith(PASS)) return false;
-        if (userRepository.getUser(password) == null) return false;
-        client.write(OK_RESPONSE);
-        currentUser = new User(userRepository.getUser(username));
-        return true;
+    private void handleQuit(Socket client, List<Integer> emailsToDelete) throws IOException {
+        client.write("+OK Server signing off\n");
+        for (Integer id : emailsToDelete) {
+            if (emailRepository.getEmailById(id) == null) continue;
+            emailRepository.deleteEmail(id);
+        }
     }
 }

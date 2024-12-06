@@ -7,8 +7,6 @@ public class Email {
     private String subject;
     private String body;
 
-    private byte size;
-
     public Email() {
     }
 
@@ -22,10 +20,6 @@ public class Email {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getSender() {
@@ -60,17 +54,13 @@ public class Email {
         this.body = body;
     }
 
-    public void setSize(byte size) {
-        this.size = size;
-    }
-
     public byte calcSize() {
-        String content = sender + recipient + subject + body;
-        byte byteSum = 0;
-        for (byte x : content.getBytes()) {
-            byteSum += x;
+        String email = sender + recipient + subject + body;
+        byte bytes = 0;
+        for (byte emailByte : email.getBytes()) {
+            bytes += emailByte;
         }
-        return byteSum;
+        return bytes;
     }
 
     @Override
