@@ -88,7 +88,7 @@ public class POP3Client extends Client {
     public static void main(String[] args) {
         try {
             POP3Client pop3Client = new POP3Client("localhost", 110, "jahid.uddin@hotfemail.com");
-            pop3Client.authenticate("hallo1234");
+            pop3Client.authenticate("password");
             pop3Client.getStat();
             pop3Client.getList();
             pop3Client.getRetr(7);

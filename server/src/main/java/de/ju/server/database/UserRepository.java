@@ -1,6 +1,7 @@
 package de.ju.server.database;
 
 import de.ju.server.entities.User;
+import de.ju.server.security.PasswordEncryption;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,8 +31,7 @@ public class UserRepository {
         String query = "INSERT INTO Users (email, password) VALUES (?, ?)";
         try (Connection connection = DatabaseConnector.getInstance().getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, email);
-            // TODO: Encrypt the password
-            preparedStatement.setString(2, password);
+            preparedStatement.setString(2, PasswordEncryption.hashPassword(password));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

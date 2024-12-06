@@ -5,6 +5,7 @@ import de.ju.server.database.UserRepository;
 import de.ju.server.entities.Email;
 import de.ju.server.entities.User;
 import de.ju.server.networking.Socket;
+import de.ju.server.security.PasswordEncryption;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class POP3Server extends Server {
         if (!response.startsWith("PASS")) return null;
 
         String password = decodeBase64(response.substring(5));
-        if (!user.getPassword().equals(password)) return null;
+        if (!PasswordEncryption.checkPassword(password, user.getPassword())) return null;
         client.write(OK_RESPONSE);
 
         return user;
