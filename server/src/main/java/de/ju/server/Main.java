@@ -7,7 +7,7 @@ import de.ju.server.protocols.SMTPServer;
 
 public class Main {
     public static void main(String[] args) {
-        String serverDomain = "truyou.com";
+        String serverDomain = "hotfemail.com";
         EmailRepository emailRepository = new EmailRepository();
         UserRepository userRepository = new UserRepository();
 

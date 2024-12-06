@@ -1,4 +1,4 @@
-package de.ju.client.service.email;
+package de.ju.client.email;
 
 import de.ju.client.lib.networking.Socket;
 import de.ju.client.service.email.exception.FailedAuthenticationException;
@@ -153,9 +153,9 @@ public class SMTPClient {
 
     public static void main(String[] args) {
         try {
-            SMTPClient smtpClient = new SMTPClient("localhost", 587, "jahid.uddin@truyou.com");
+            SMTPClient smtpClient = new SMTPClient("localhost", 587, "jahid.uddin@hotfemail.com");
             smtpClient.authenticate("hallo1234");
-            smtpClient.sendMail("muharrem.avci@truyou.com", "Hello World", "Das ist ein Test.");
+            smtpClient.sendMail("muharrem.avci@hotfemail.com", "Hello World", "Das ist ein Test.");
         } catch (FailedConnectionException | FailedAuthenticationException e) {
             System.err.println(e.getMessage());
         }

@@ -32,30 +32,19 @@ public class EmailRepository {
         String query = "SELECT * FROM Emails WHERE id = (?)";
         try (Connection connection = DatabaseConnector.getInstance().getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query); ResultSet resultSet = preparedStatement.executeQuery()) {
             preparedStatement.setString(1, Integer.toString(id));
-            Email email = new Email(resultSet.getInt("id"), resultSet.getString("sender"), resultSet.getString("recipient"), resultSet.getString("subject"), resultSet.getString("body"));
-            return email;
+            return new Email(resultSet.getInt("id"), resultSet.getString("sender"), resultSet.getString("recipient"), resultSet.getString("subject"), resultSet.getString("body"));
         } catch (SQLException e) {
             return null;
         }
     }
 
     public void storeEmail(Email email) {
-        String query = "INSERT INTO Emails (sender, recipient, subject, body, size) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Emails (sender, recipient, subject, body) VALUES (?, ?, ?, ?)";
         try (Connection connection = DatabaseConnector.getInstance().getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, email.getSender());
             preparedStatement.setString(2, email.getRecipient());
             preparedStatement.setString(3, email.getSubject());
             preparedStatement.setString(4, email.getBody());
-            preparedStatement.setByte(5, email.calcSize());
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        query = "INSERT INTO UserEmails (user_id, email_id) VALUES (?, ?)";
-        try (Connection connection = DatabaseConnector.getInstance().getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, email.getSender());
-            preparedStatement.setString(2, email.getRecipient());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -93,10 +82,10 @@ public class EmailRepository {
                 try {
                     connection.rollback();  // Rollback der Transaktion bei einem Fehler
                 } catch (SQLException rollbackEx) {
-                    rollbackEx.printStackTrace();
+                     System.out.println(rollbackEx.getMessage());
                 }
             }
-            e.printStackTrace();
+             System.out.println(e.getMessage());
             return false;
         } finally {
             if (connection != null) {
@@ -104,14 +93,12 @@ public class EmailRepository {
                     connection.setAutoCommit(true);  // Stelle den Auto-Commit wieder her
                     connection.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
             }
         }
 
         return true;  // Alle Queries wurden erfolgreich ausgeführt
     }
-
-
 }
 

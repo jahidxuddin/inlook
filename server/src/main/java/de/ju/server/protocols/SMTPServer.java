@@ -7,7 +7,7 @@ import de.ju.server.entities.User;
 import de.ju.server.networking.Socket;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Base64;
 
 public class SMTPServer extends Server {
     private static final String OK_RESPONSE = "250 OK\n";
@@ -43,7 +43,7 @@ public class SMTPServer extends Server {
 
         if (!waitForData(client, 5000)) return false;
         String response = client.readLine();
-        if (!response.startsWith("EHLO") || !response.startsWith("HELO")) {
+        if (!response.startsWith("HELO")) {
             client.write(INVALID_COMMAND_RESPONSE);
             return false;
         }
@@ -109,7 +109,7 @@ public class SMTPServer extends Server {
                 email.setRecipient(recipientMail);
             } else if (commandLine.startsWith("DATA")) {
                 String data = handleData(client);
-                email.setSubject(data.substring(0, data.indexOf("\n")));
+                email.setSubject(data.substring(9, data.indexOf("\n")));
                 email.setBody(data.substring(data.indexOf("\n")));
             } else if (commandLine.startsWith("QUIT")) {
                 handleQuit(client);
@@ -126,18 +126,16 @@ public class SMTPServer extends Server {
         System.out.println("C: MAIL FROM: " + commandLine.substring(10));
         client.write(OK_RESPONSE);
         System.out.println("S: " + OK_RESPONSE);
-        return commandLine
-                .substring(10)
-                .substring(1, commandLine.length() - 1);
+        String rawEmail = commandLine.substring(10);
+        return rawEmail.substring(1, rawEmail.length() - 1);
     }
 
     private String handleRecipient(Socket client, String commandLine) throws IOException {
         System.out.println("C: RCPT TO: " + commandLine.substring(8));
         client.write(OK_RESPONSE);
         System.out.println("S: " + OK_RESPONSE);
-        return commandLine
-                .substring(8)
-                .substring(1, commandLine.length() - 1);
+        String rawEmail = commandLine.substring(8);
+        return rawEmail.substring(1, rawEmail.length() - 1);
     }
 
     private String handleData(Socket client) throws IOException {
