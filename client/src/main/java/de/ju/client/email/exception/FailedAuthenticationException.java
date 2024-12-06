@@ -1,4 +1,4 @@
-package de.ju.client.service.email.exception;
+package de.ju.client.email.exception;
 
 public class FailedAuthenticationException extends Exception {
     public FailedAuthenticationException(String message) {

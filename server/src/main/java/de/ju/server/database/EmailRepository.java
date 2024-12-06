@@ -12,30 +12,51 @@ import java.util.List;
 public class EmailRepository {
     public List<Email> getAllEmailsFromUser(String username) {
         List<Email> emails = new ArrayList<>();
-
-        String query = "SELECT * FROM Emails WHERE sender = (?)";
-        try (Connection connection = DatabaseConnector.getInstance().getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query); ResultSet resultSet = preparedStatement.executeQuery()) {
+        String query = "SELECT * FROM Emails WHERE sender = ?";
+        try (Connection connection = DatabaseConnector.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
 
-            while (resultSet.next()) {
-                Email email = new Email(resultSet.getInt("id"), resultSet.getString("sender"), resultSet.getString("recipient"), resultSet.getString("subject"), resultSet.getString("body"));
-                emails.add(email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Email email = new Email(
+                            resultSet.getInt("id"),
+                            resultSet.getString("sender"),
+                            resultSet.getString("recipient"),
+                            resultSet.getString("subject"),
+                            resultSet.getString("body")
+                    );
+                    emails.add(email);
+                }
             }
-
-            return emails;
         } catch (SQLException e) {
-            return emails;
+            System.err.println("Error while retrieving emails: " + e.getMessage());
         }
+
+        return emails;
     }
 
     public Email getEmailById(int id) {
-        String query = "SELECT * FROM Emails WHERE id = (?)";
-        try (Connection connection = DatabaseConnector.getInstance().getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query); ResultSet resultSet = preparedStatement.executeQuery()) {
-            preparedStatement.setString(1, Integer.toString(id));
-            return new Email(resultSet.getInt("id"), resultSet.getString("sender"), resultSet.getString("recipient"), resultSet.getString("subject"), resultSet.getString("body"));
+        String query = "SELECT * FROM Emails WHERE id = ?";
+        try (Connection connection = DatabaseConnector.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    // Construct and return the Email object
+                    return new Email(
+                            resultSet.getInt("id"),
+                            resultSet.getString("sender"),
+                            resultSet.getString("recipient"),
+                            resultSet.getString("subject"),
+                            resultSet.getString("body")
+                    );
+                }
+            }
         } catch (SQLException e) {
-            return null;
+            System.err.println("Error while retrieving email by ID: " + e.getMessage());
         }
+        return null;
     }
 
     public void storeEmail(Email email) {

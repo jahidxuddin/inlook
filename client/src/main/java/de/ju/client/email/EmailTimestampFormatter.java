@@ -1,4 +1,4 @@
-package de.ju.client.service.email;
+package de.ju.client.email;
 
 import java.time.Duration;
 import java.time.LocalDate;

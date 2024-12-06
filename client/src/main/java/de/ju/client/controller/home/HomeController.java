@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-import static de.ju.client.service.email.EmailTimestampFormatter.formatEmailTimestamp;
+import static de.ju.client.email.EmailTimestampFormatter.formatEmailTimestamp;
 
 public class HomeController {
     @FXML

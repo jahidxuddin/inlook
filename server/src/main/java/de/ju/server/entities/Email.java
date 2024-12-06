@@ -54,17 +54,13 @@ public class Email {
         this.body = body;
     }
 
-    public byte calcSize() {
+    public int calcSize() {
         String email = sender + recipient + subject + body;
-        byte bytes = 0;
-        for (byte emailByte : email.getBytes()) {
-            bytes += emailByte;
-        }
-        return bytes;
+        return email.getBytes().length;
     }
 
     @Override
     public String toString() {
-        return "Email{" + "sender='" + sender + '\'' + ", recipient='" + recipient + '\'' + ", subject='" + subject + '\'' + ", body='" + body + '\'' + '}';
+        return "Email{" + "id=" + id + ", sender='" + sender + '\'' + ", recipient='" + recipient + '\'' + ", subject='" + subject + '\'' + ", body='" + body.trim() + '\'' + '}';
     }
 }

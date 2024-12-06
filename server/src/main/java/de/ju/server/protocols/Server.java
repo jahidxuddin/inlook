@@ -4,6 +4,7 @@ import de.ju.server.networking.ServerSocket;
 import de.ju.server.networking.Socket;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -86,5 +87,9 @@ public abstract class Server {
             }
         }
         return true;
+    }
+
+    protected String decodeBase64(String encoded) {
+        return new String(Base64.getDecoder().decode(encoded));
     }
 }

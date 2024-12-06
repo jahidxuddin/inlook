@@ -1,13 +1,11 @@
 package de.ju.client.email;
 
-import de.ju.client.lib.networking.Socket;
-import de.ju.client.service.email.exception.FailedAuthenticationException;
-import de.ju.client.service.email.exception.FailedConnectionException;
+import de.ju.client.email.exception.FailedAuthenticationException;
+import de.ju.client.email.exception.FailedConnectionException;
 
 import java.io.IOException;
-import java.util.Base64;
 
-public class SMTPClient {
+public class SMTPClient extends Client {
     private static final String CMD_HELO = "HELO %s";
     private static final String CMD_MAIL_FROM = "MAIL FROM:<%s>";
     private static final String CMD_RCPT_TO = "RCPT TO:<%s>";
@@ -21,16 +19,16 @@ public class SMTPClient {
     private static final String RESPONSE_AUTH_FAILED = "535";
     private static final String RESPONSE_AUTH_USERNAME_PROMPT = "334";
 
-    private final Socket socket;
     private final String email;
 
     public SMTPClient(String hostname, int port, String email) throws FailedConnectionException {
-        this.socket = new Socket(hostname, port);
+        super(hostname, port);
         this.email = email;
         initiateConnection();
     }
 
-    private void initiateConnection() throws FailedConnectionException {
+    @Override
+    protected void initiateConnection() throws FailedConnectionException {
         if (!this.socket.connect()) {
             throw new FailedConnectionException("Connection initiation failed: server did not respond as expected.");
         }
@@ -103,52 +101,6 @@ public class SMTPClient {
         } catch (IOException e) {
             throw new FailedConnectionException("Error during message body transmission.", e);
         }
-    }
-
-    private boolean sendAndCheck(String command, String expectedStart) throws FailedConnectionException {
-        String response = sendCommand(command);
-        return !response.startsWith(expectedStart);
-    }
-
-    private String sendCommand(String command) throws FailedConnectionException {
-        try {
-            logClientCommand(command);
-            this.socket.write(command + "\n");
-
-            waitForServerResponse();
-            String response = this.socket.readLine();
-            logServerResponse(response);
-
-            return response;
-        } catch (IOException e) {
-            throw new FailedConnectionException("Failed to communicate with the server.", e);
-        }
-    }
-
-    private void waitForServerResponse() throws IOException {
-        while (this.socket.dataAvailable() <= 0) ;
-    }
-
-    private void writeWithDelay(String message, int delay) throws IOException {
-        this.socket.write(message + "\n");
-        logClientCommand(message);
-        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private String encodeBase64(String input) {
-        return Base64.getEncoder().encodeToString(input.getBytes());
-    }
-
-    private void logClientCommand(String command) {
-        System.out.println("C: " + command);
-    }
-
-    private void logServerResponse(String response) {
-        System.out.println("S: " + response);
     }
 
     public static void main(String[] args) {

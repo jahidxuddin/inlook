@@ -7,7 +7,6 @@ import de.ju.server.entities.User;
 import de.ju.server.networking.Socket;
 
 import java.io.IOException;
-import java.util.Base64;
 
 public class SMTPServer extends Server {
     private static final String OK_RESPONSE = "250 OK\n";
@@ -81,10 +80,6 @@ public class SMTPServer extends Server {
 
         client.write(AUTH_SUCCESS_RESPONSE);
         return true;
-    }
-
-    private String decodeBase64(String encoded) {
-        return new String(Base64.getDecoder().decode(encoded));
     }
 
     private void processMailCommands(Socket client) throws IOException {

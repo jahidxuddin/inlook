@@ -49,7 +49,7 @@ public class POP3Server extends Server {
         response = client.readLine();
         if (!response.startsWith("PASS")) return null;
 
-        String password = response.substring(5);
+        String password = decodeBase64(response.substring(5));
         if (!user.getPassword().equals(password)) return null;
         client.write(OK_RESPONSE);
 
@@ -81,7 +81,7 @@ public class POP3Server extends Server {
         List<Email> allEmails = emailRepository.getAllEmailsFromUser(userEmail);
         int amountOfAllEmails = allEmails.size();
 
-        byte sizeOfAllEmail = 0;
+        int sizeOfAllEmail = 0;
         for (Email email : allEmails) {
             sizeOfAllEmail += email.calcSize();
         }
@@ -103,8 +103,7 @@ public class POP3Server extends Server {
     private void handleRetr(Socket client, int emailId) throws IOException {
         Email email = emailRepository.getEmailById(emailId);
         if (email == null) return;
-
-        client.write("+OK " + email.calcSize() + " octets\n" + email + "\n.\n");
+        client.write("+OK " + email.calcSize() + " octets " + email + "\n");
     }
 
     private void handleDele(Socket client, List<Integer> emailsToDelete, int emailId) throws IOException {
