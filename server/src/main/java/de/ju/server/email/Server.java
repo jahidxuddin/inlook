@@ -1,4 +1,4 @@
-package de.ju.server.protocols;
+package de.ju.server.email;
 
 import de.ju.server.networking.ServerSocket;
 import de.ju.server.networking.Socket;

@@ -62,5 +62,6 @@
                  AnchorPane.topAnchor="60.0"
                  AnchorPane.bottomAnchor="20.0"
                  AnchorPane.leftAnchor="20.0"
-                 AnchorPane.rightAnchor="20.0"/>
+                 AnchorPane.rightAnchor="20.0"
+    />
 </AnchorPane>

@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -20,6 +21,8 @@ public class AppEntry extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/view/AccountView.fxml"));
         Parent modalRoot = loader.load();
         Stage modalStage = new Stage();
+        Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("icon/icon.png")));
+        modalStage.getIcons().add(icon);
         modalStage.initModality(Modality.APPLICATION_MODAL);
         modalStage.initOwner(primaryStage); // Blocks interaction with primary stage
         modalStage.setScene(new Scene(modalRoot, 400, 500));

@@ -1,27 +1,30 @@
-package de.ju.server.protocols;
+package de.ju.server.email;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ju.server.database.EmailRepository;
-import de.ju.server.database.UserRepository;
 import de.ju.server.entities.Email;
 import de.ju.server.entities.User;
+import de.ju.server.networking.HTTPClient;
 import de.ju.server.networking.Socket;
-import de.ju.server.security.PasswordEncryption;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class POP3Server extends Server {
     private static final String OK_RESPONSE = "+OK\n";
     private static final String GREETING_REQUEST = "+OK POP3 Server Ready\n";
 
     private final EmailRepository emailRepository;
-    private final UserRepository userRepository;
 
-    public POP3Server(int port, String serverDomain, EmailRepository emailRepository, UserRepository userRepository) {
+    public POP3Server(int port, String serverDomain, EmailRepository emailRepository) {
         super(port, serverDomain);
         this.emailRepository = emailRepository;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -37,23 +40,42 @@ public class POP3Server extends Server {
     }
 
     private User authenticateClient(Socket client) throws IOException {
-        if (!waitForData(client, 5000)) return null;
+        if (!waitForData(client, 5000)) {
+            client.write("AUTH_FAILED: No data received within timeout.\n");
+            return null;
+        }
         String response = client.readLine();
-        if (!response.startsWith("USER")) return null;
+        if (!response.startsWith("JWT")) {
+            client.write("AUTH_FAILED: Missing or invalid JWT command.\n");
+            return null;
+        }
+        String jwtToken = response.substring(4);
+        HttpClient httpClient = HTTPClient.getInstance();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:9000/api/v1/find-user-by-jwt")).header("Content-Type", "application/json").header("Authorization", jwtToken).GET().build();
 
-        String username = response.substring(5);
-        User user = userRepository.getUser(username);
-        if (user == null) return null;
+        User user = new User();
+        try {
+            HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (httpResponse.statusCode() != 200) {
+                client.write("AUTH_FAILED: Invalid jwt token.\n");
+                return null;
+            }
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> jsonMap = objectMapper.readValue(httpResponse.body(), Map.class);
+
+            int id = (int) jsonMap.get("id");
+            String email = (String) jsonMap.get("email");
+            String password = (String) jsonMap.get("password");
+
+            user.setId(id);
+            user.setEmail(email);
+            user.setPassword(password);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         client.write(OK_RESPONSE);
-
-        if (!waitForData(client, 5000)) return null;
-        response = client.readLine();
-        if (!response.startsWith("PASS")) return null;
-
-        String password = decodeBase64(response.substring(5));
-        if (!PasswordEncryption.checkPassword(password, user.getPassword())) return null;
-        client.write(OK_RESPONSE);
-
         return user;
     }
 

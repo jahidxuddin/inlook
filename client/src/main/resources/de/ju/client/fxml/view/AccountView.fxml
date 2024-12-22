@@ -23,7 +23,7 @@
             <Text fx:id="currentAccountEmail" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
             <HBox spacing="10" alignment="CENTER">
                 <!-- Manage Account Button (Secondary) -->
-                <MFXButton text="Hotfemail Konto verwalten"
+                <MFXButton text="Inlook Konto verwalten"
                            onAction="#onManageAccount"
                            style="-fx-background-color: #E8F0FE;
                               -fx-text-fill: #1A73E8;

@@ -12,7 +12,7 @@ import java.util.List;
 public class EmailRepository {
     public List<Email> getAllEmailsFromUser(String username) {
         List<Email> emails = new ArrayList<>();
-        String query = "SELECT * FROM Emails WHERE sender = ?";
+        String query = "SELECT * FROM Emails WHERE recipient = ?";
         try (Connection connection = DatabaseConnector.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
@@ -24,7 +24,8 @@ public class EmailRepository {
                             resultSet.getString("sender"),
                             resultSet.getString("recipient"),
                             resultSet.getString("subject"),
-                            resultSet.getString("body")
+                            resultSet.getString("body"),
+                            resultSet.getString("sentAt")
                     );
                     emails.add(email);
                 }
@@ -49,7 +50,8 @@ public class EmailRepository {
                             resultSet.getString("sender"),
                             resultSet.getString("recipient"),
                             resultSet.getString("subject"),
-                            resultSet.getString("body")
+                            resultSet.getString("body"),
+                            resultSet.getString("sentAt")
                     );
                 }
             }

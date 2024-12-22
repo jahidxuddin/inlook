@@ -1,7 +1,11 @@
 package de.ju.client.controller.home;
 
+import de.ju.client.data.DataStore;
+import de.ju.client.email.client.POP3Client;
+import de.ju.client.email.exception.FailedAuthenticationException;
+import de.ju.client.email.exception.FailedConnectionException;
+import de.ju.client.email.model.Email;
 import de.ju.client.lib.ui.Overlay;
-import de.ju.client.model.Email;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.effects.DepthLevel;
 import javafx.event.ActionEvent;
@@ -10,15 +14,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static de.ju.client.email.EmailTimestampFormatter.formatEmailTimestamp;
 
 public class HomeController {
     @FXML
@@ -29,8 +32,8 @@ public class HomeController {
     @FXML
     public void initialize() {
         initializeOverlays();
-        initializeEmailListView();
         populateEmailListView();
+        initializeEmailListView();
     }
 
     private void initializeOverlays() {
@@ -50,8 +53,22 @@ public class HomeController {
     }
 
     private void populateEmailListView() {
-        List<Email> emails = List.of(new Email("Welcome", "support@hotfemail.com", formatEmailTimestamp(LocalDateTime.now()), "Thank you for signing up!"), new Email("Product Update", "updates@hotfemail.com", formatEmailTimestamp(LocalDateTime.now().minusMinutes(30)), "We have released a new feature."), new Email("Meeting Reminder", "hr@hotfemail.com", formatEmailTimestamp(LocalDateTime.now().minusHours(2)), "Don't forget about the team meeting tomorrow."), new Email("Security Alert", "security@hotfemail.com", formatEmailTimestamp(LocalDateTime.now().minusHours(8)), "Suspicious login detected. Please review your recent activity."), new Email("Password Reset", "no-reply@hotfemail.com", formatEmailTimestamp(LocalDateTime.now().minusDays(2)), "Click here to reset your password."), new Email("Invoice", "billing@hotfemail.com", formatEmailTimestamp(LocalDateTime.now().minusDays(1)), "Your invoice for November is attached."), new Email("Offer", "sales@hotfemail.com", formatEmailTimestamp(LocalDateTime.now().minusDays(6)), "Exclusive offer just for you!"), new Email("Event Invitation", "events@hotfemail.com", formatEmailTimestamp(LocalDateTime.now().minusDays(7)), "You're invited to our upcoming community event."));
-        emailListView.getItems().addAll(emails);
+        try {
+            POP3Client pop3Client = new POP3Client("localhost", 110);
+            pop3Client.authenticate(DataStore.getInstance().getJwtToken());
+            List<String> emailIds = pop3Client.getList();
+            List<Email> emails = new ArrayList<>();
+            for (String id : emailIds) {
+                Email email = pop3Client.getRetr(Integer.parseInt(id));
+                if (email != null) {
+                    emails.add(email);
+                }
+            }
+            emails = emails.reversed();
+            emailListView.getItems().addAll(emails);
+        } catch (FailedConnectionException | FailedAuthenticationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML
@@ -70,6 +87,8 @@ public class HomeController {
             Parent modalRoot = loader.load();
 
             Stage modalStage = new Stage();
+            Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/de/ju/client/icon/icon.png")));
+            modalStage.getIcons().add(icon);
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.setTitle(title);
             modalStage.setResizable(false);

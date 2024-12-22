@@ -6,16 +6,18 @@ public class Email {
     private String recipient;
     private String subject;
     private String body;
+    private String sentAt;
 
     public Email() {
     }
 
-    public Email(int id, String sender, String recipient, String subject, String body) {
+    public Email(int id, String sender, String recipient, String subject, String body, String sentAt) {
         this.id = id;
         this.sender = sender;
         this.recipient = recipient;
         this.subject = subject;
         this.body = body;
+        this.sentAt = sentAt;
     }
 
     public int getId() {
@@ -54,6 +56,14 @@ public class Email {
         this.body = body;
     }
 
+    public String getSentAt() {
+        return sentAt;
+    }
+
+    public void setSentAt(String sentAt) {
+        this.sentAt = sentAt;
+    }
+
     public int calcSize() {
         String email = sender + recipient + subject + body;
         return email.getBytes().length;
@@ -61,6 +71,6 @@ public class Email {
 
     @Override
     public String toString() {
-        return "Email{" + "id=" + id + ", sender='" + sender + '\'' + ", recipient='" + recipient + '\'' + ", subject='" + subject + '\'' + ", body='" + body.trim() + '\'' + '}';
+        return "Email{" + "id=" + id + ", sender='" + sender + '\'' + ", recipient='" + recipient + '\'' + ", subject='" + subject + '\'' + ", body='" + body.trim().replaceAll("\n", " n ") + '\'' + ", sentAt='" + sentAt + '\'' + '}';
     }
 }

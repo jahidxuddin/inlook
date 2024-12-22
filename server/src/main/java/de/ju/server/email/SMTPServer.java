@@ -1,12 +1,16 @@
-package de.ju.server.protocols;
+package de.ju.server.email;
 
 import de.ju.server.database.EmailRepository;
 import de.ju.server.database.UserRepository;
 import de.ju.server.entities.Email;
-import de.ju.server.entities.User;
+import de.ju.server.networking.HTTPClient;
 import de.ju.server.networking.Socket;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class SMTPServer extends Server {
     private static final String OK_RESPONSE = "250 OK\n";
@@ -14,8 +18,7 @@ public class SMTPServer extends Server {
     private static final String GREETING_REQUEST = "220 %s ESMTP Service Ready\n";
     private static final String GREETING_RESPONSE = "250 %s Hello %s\n";
     private static final String AUTH_LOGIN = "AUTH LOGIN";
-    private static final String REQUEST_USERNAME = "334 VXNlcm5hbWU6\n";
-    private static final String REQUEST_PASSWORD = "334 UGFzc3dvcmQ6\n";
+    private static final String REQUEST_JWT = "334 SldU\n";
     private static final String AUTH_SUCCESS_RESPONSE = "235 Authentication successful\n";
     private static final String AUTH_FAILED_RESPONSE = "535 Authentication failed\n";
     private static final String DATA_RESPONSE = "354 End data with <CR><LF>.<CR><LF>\n";
@@ -55,27 +58,28 @@ public class SMTPServer extends Server {
     private boolean authenticateClient(Socket client) throws IOException {
         if (!waitForData(client, 5000) || !client.readLine().equals(AUTH_LOGIN)) return false;
 
-        client.write(REQUEST_USERNAME);
+        client.write(REQUEST_JWT);
         if (!waitForData(client, 5000)) {
             client.write(AUTH_FAILED_RESPONSE);
             return false;
         }
-        String username = decodeBase64(client.readLine());
-        User user = this.userRepository.getUser(username);
-        if (user == null) {
-            client.write(AUTH_FAILED_RESPONSE);
-            return false;
-        }
+        String jwtToken = client.readLine().substring(4);
+        HttpClient httpClient = HTTPClient.getInstance();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:9000/api/v1/verify-jwt"))
+                .header("Content-Type", "application/json")
+                .header("Authorization", jwtToken)
+                .GET()
+                .build();
 
-        client.write(REQUEST_PASSWORD);
-        if (!waitForData(client, 5000)) {
-            client.write(AUTH_FAILED_RESPONSE);
-            return false;
-        }
-        String password = decodeBase64(client.readLine());
-        if (!user.getPassword().equals(password)) {
-            client.write(AUTH_FAILED_RESPONSE);
-            return false;
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                client.write(AUTH_FAILED_RESPONSE);
+                return false;
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
         client.write(AUTH_SUCCESS_RESPONSE);

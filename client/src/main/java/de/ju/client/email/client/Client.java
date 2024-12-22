@@ -1,4 +1,4 @@
-package de.ju.client.email;
+package de.ju.client.email.client;
 
 import de.ju.client.email.exception.FailedConnectionException;
 import de.ju.client.lib.networking.Socket;

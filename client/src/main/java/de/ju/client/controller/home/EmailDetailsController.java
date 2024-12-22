@@ -1,6 +1,6 @@
 package de.ju.client.controller.home;
 
-import de.ju.client.model.Email;
+import de.ju.client.email.model.Email;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,8 +40,8 @@ public class EmailDetailsController {
                     Platform.runLater(() -> {
                         this.emailData = (Email) userData;
                         subjectText.setText(emailData.getSubject());
-                        details.setText(emailData.getSender().substring(0, emailData.getSender().indexOf("@")) + " - " + emailData.getDate());
-                        contentText.setText(emailData.getContent());
+                        details.setText(emailData.getSender().substring(0, emailData.getSender().indexOf("@")) + " - " + emailData.getSentAt());
+                        contentText.setText(emailData.getBody());
                     });
                 }
                 try {

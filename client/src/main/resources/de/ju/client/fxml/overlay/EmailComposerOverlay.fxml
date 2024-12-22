@@ -51,6 +51,7 @@
     <!-- Footer Buttons -->
     <HBox alignment="CENTER" spacing="15" style="-fx-padding: 24px;">
         <MFXButton
+                onAction="#onSendMail"
                 text=""
                 HBox.hgrow="ALWAYS"
                 style="-fx-background-color: #E8F0FE; -fx-text-fill: #1A73E8; -fx-border-radius: 20; -fx-font-size: 14px; -fx-padding: 10px 15px 10px 15px; -fx-border-radius: 5px;">

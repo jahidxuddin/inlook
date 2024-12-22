@@ -1,6 +1,6 @@
 package de.ju.client.controller.home;
 
-import de.ju.client.model.Email;
+import de.ju.client.email.model.Email;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.controls.cell.MFXListCell;
 import javafx.geometry.Pos;
@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 public class EmailListCell extends MFXListCell<Email> {
+
     public EmailListCell(MFXListView<Email> listView, Email item) {
         super(listView, item);
 
@@ -15,7 +16,7 @@ public class EmailListCell extends MFXListCell<Email> {
         senderLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
         Label subjectLabel = new Label(item.getSubject());
         subjectLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-        Label timestampLabel = new Label(item.getDate());
+        Label timestampLabel = new Label(item.getSentAt());
         timestampLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
 
         HBox cellContainer = new HBox(10);

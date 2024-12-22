@@ -1,5 +1,9 @@
 package de.ju.client.controller.home;
 
+import de.ju.client.data.DataStore;
+import de.ju.client.email.client.SMTPClient;
+import de.ju.client.email.exception.FailedAuthenticationException;
+import de.ju.client.email.exception.FailedConnectionException;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.event.ActionEvent;
@@ -18,13 +22,34 @@ public class EmailComposerController {
     @FXML
     public TextArea contentField;
     @FXML
-    public MFXButton sendButton;
-    @FXML
     public MFXButton attachButton;
 
     @FXML
     private void closeOverlay(ActionEvent event) {
         Pane root = (Pane) overlay.getScene().getRoot();
         root.getChildren().remove(this.overlay);
+    }
+
+    @FXML
+    private void onSendMail(ActionEvent event) {
+        String recipientEmail = recipientField.getText();
+        String subject = subjectField.getText();
+        String body = contentField.getText();
+
+        if (recipientEmail.isEmpty() || subject.isEmpty() || body.isEmpty()) {
+            return;
+        }
+
+        try {
+            SMTPClient smtpClient = SMTPClient.getInstance("localhost", 587, DataStore.getInstance().getEmail());
+            smtpClient.authenticate(DataStore.getInstance().getJwtToken());
+            smtpClient.sendMail(recipientEmail.trim(), subject.trim(), body.trim());
+        } catch (FailedConnectionException | FailedAuthenticationException e) {
+            System.err.println(e.getMessage());
+        }
+
+        recipientField.setText("");
+        subjectField.setText("");
+        contentField.setText("");
     }
 }

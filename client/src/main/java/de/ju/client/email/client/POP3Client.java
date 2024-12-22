@@ -1,16 +1,16 @@
-package de.ju.client.email;
+package de.ju.client.email.client;
 
 import de.ju.client.email.exception.FailedAuthenticationException;
 import de.ju.client.email.exception.FailedConnectionException;
+import de.ju.client.email.model.Email;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class POP3Client extends Client {
-    private final String email;
-
-    public POP3Client(String hostname, int port, String email) throws FailedConnectionException {
+    public POP3Client(String hostname, int port) throws FailedConnectionException {
         super(hostname, port);
-        this.email = email;
         initiateConnection();
     }
 
@@ -33,13 +33,9 @@ public class POP3Client extends Client {
         }
     }
 
-    public void authenticate(String password) throws FailedAuthenticationException, FailedConnectionException {
-        if (sendAndCheck("USER " + email, "+OK")) {
-            throw new FailedAuthenticationException("Failed to start authentication.");
-        }
-
-        if (sendAndCheck("PASS " + encodeBase64(password), "+OK")) {
-            throw new FailedAuthenticationException("Failed to start authentication.");
+    public void authenticate(String jwtToken) throws FailedAuthenticationException, FailedConnectionException {
+        if (sendAndCheck("JWT " + jwtToken, "+OK")) {
+            throw new FailedAuthenticationException("Failed authentication.");
         }
     }
 
@@ -51,30 +47,32 @@ public class POP3Client extends Client {
         String emailsSize = responseParts[2];
     }
 
-    public void getList() throws FailedConnectionException {
-        if (sendAndCheck("LIST", "+OK")) return;
+    public List<String> getList() throws FailedConnectionException {
+        if (sendAndCheck("LIST", "+OK")) return List.of();
+        List<String> emailIds = new ArrayList<>();
         try {
             String response;
             while (!(response = this.socket.readLine()).equals(".")) {
                 logServerResponse(response);
                 String[] responseParts = response.split(" ");
                 String id = responseParts[0];
-                String emailSize = responseParts[1];
+                emailIds.add(id);
             }
             logServerResponse(response);
+            return emailIds;
         } catch (IOException e) {
             throw new FailedConnectionException("Failed to get list.", e);
         }
     }
 
-    public void getRetr(int emailId) throws FailedConnectionException {
+    public Email getRetr(int emailId) throws FailedConnectionException {
         String response = sendCommand("RETR " + emailId);
         if (!response.startsWith("+OK")) {
-            return;
+            return null;
         }
         String[] responseParts = response.split(" ");
-        String emailSize = responseParts[1];
-        String email = responseParts[3];
+        String emailJson = response.substring(response.indexOf(responseParts[3].charAt(0)));
+        return Email.parseEmail(emailJson);
     }
 
     public boolean dele(int emailId) throws FailedConnectionException {
@@ -83,23 +81,5 @@ public class POP3Client extends Client {
 
     public boolean quit() throws FailedConnectionException {
         return !sendAndCheck("QUIT", "+OK Server signing off");
-    }
-
-    public static void main(String[] args) {
-        try {
-            POP3Client pop3Client = new POP3Client("localhost", 110, "jahid.uddin@hotfemail.com");
-            pop3Client.authenticate("password");
-            pop3Client.getStat();
-            pop3Client.getList();
-            pop3Client.getRetr(7);
-            if (pop3Client.dele(7)) {
-                System.out.println("Deletion succed");
-            }
-            if (pop3Client.quit()) {
-                System.out.println("Quit successful");
-            }
-        } catch (FailedConnectionException | FailedAuthenticationException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
