@@ -37,8 +37,23 @@
             </graphic>
         </MFXButton>
 
-        <!-- Spacer (pushes the next button to the right) -->
+        <!-- Spacer (pushes the next buttons to the right) -->
         <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Right Button: Refresh Icon -->
+        <MFXButton
+                text=""
+                style="-fx-background-color: transparent;"
+                onAction="#populateEmailListView"
+                HBox.hgrow="ALWAYS">
+            <graphic>
+                <MFXFontIcon
+                        color="#1A73E8"
+                        description="fas-rotate"
+                        size="32"
+                />
+            </graphic>
+        </MFXButton>
 
         <!-- Right Button: Account Icon -->
         <MFXButton

@@ -21,18 +21,15 @@ public class SMTPClient extends Client {
 
     private final String email;
 
-    // Singleton instance
     private static volatile SMTPClient instance;
 
-    // Private constructor to restrict instantiation
-    private SMTPClient(String hostname, int port, String email) throws FailedConnectionException {
+    private SMTPClient(String hostname, int port, String email) {
         super(hostname, port);
         this.email = email;
-        initiateConnection();
     }
 
     @Override
-    protected void initiateConnection() throws FailedConnectionException {
+    public void initiateConnection() throws FailedConnectionException {
         if (!this.socket.connect()) {
             throw new FailedConnectionException("Connection initiation failed: server did not respond as expected.");
         }

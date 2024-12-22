@@ -42,6 +42,7 @@ public class EmailComposerController {
 
         try {
             SMTPClient smtpClient = SMTPClient.getInstance("localhost", 587, DataStore.getInstance().getEmail());
+            smtpClient.initiateConnection();
             smtpClient.authenticate(DataStore.getInstance().getJwtToken());
             smtpClient.sendMail(recipientEmail.trim(), subject.trim(), body.trim());
         } catch (FailedConnectionException | FailedAuthenticationException e) {

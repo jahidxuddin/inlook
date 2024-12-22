@@ -19,9 +19,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class HomeController {
     @FXML
@@ -52,10 +50,12 @@ public class HomeController {
         });
     }
 
+    @FXML
     private void populateEmailListView() {
         try {
             POP3Client pop3Client = new POP3Client("localhost", 110);
             pop3Client.authenticate(DataStore.getInstance().getJwtToken());
+
             List<String> emailIds = pop3Client.getList();
             List<Email> emails = new ArrayList<>();
             for (String id : emailIds) {
@@ -64,10 +64,13 @@ public class HomeController {
                     emails.add(email);
                 }
             }
-            emails = emails.reversed();
-            emailListView.getItems().addAll(emails);
+
+            Collections.reverse(emails);
+
+            emailListView.getItems().clear();
+            emailListView.getItems().setAll(emails);
         } catch (FailedConnectionException | FailedAuthenticationException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error while populating the email list view", e);
         }
     }
 
