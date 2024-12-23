@@ -6,6 +6,7 @@ import de.ju.client.data.DataStore;
 import de.ju.client.data.TokenFileHandler;
 import de.ju.client.lib.networking.HTTPClient;
 import de.ju.client.lib.ui.Overlay;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXListView;
 import io.github.palexdev.materialfx.effects.DepthLevel;
 import javafx.application.Platform;
@@ -47,6 +48,12 @@ public class AccountController {
     private Text accountsHeading;
     @FXML
     private MFXListView<String> accountListView;
+    @FXML
+    private MFXButton manageAccountBtn;
+    @FXML
+    private MFXButton redirectToDashboardBtn;
+    @FXML
+    private MFXButton logoutAllBtn;
 
     @FXML
     public void initialize() {
@@ -55,6 +62,12 @@ public class AccountController {
         initializeAccountListView();
         setupAccountsHeadingVisibility();
         setupSelectionListener();
+
+        if (currentAccountEmail.getText().isEmpty()) {
+            manageAccountBtn.setVisible(false);
+            redirectToDashboardBtn.setVisible(false);
+            logoutAllBtn.setVisible(false);
+        }
     }
 
     private void initializeOverlays() {

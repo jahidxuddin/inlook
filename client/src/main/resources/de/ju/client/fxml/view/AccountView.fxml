@@ -23,13 +23,17 @@
             <Text fx:id="currentAccountEmail" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
             <HBox spacing="10" alignment="CENTER">
                 <!-- Manage Account Button (Secondary) -->
-                <MFXButton text="Inlook Konto verwalten"
+                <MFXButton
+                           fx:id="manageAccountBtn"
+                           text="Inlook Konto verwalten"
                            onAction="#onManageAccount"
                            style="-fx-background-color: #E8F0FE;
                               -fx-text-fill: #1A73E8;
                               -fx-border-radius: 20;"/>
                 <!-- Dashboard Redirect Button (Primary) -->
-                <MFXButton text="Zum Dashboard"
+                <MFXButton
+                           fx:id="redirectToDashboardBtn"
+                           text="Zum Dashboard"
                            onAction="#onRedirectToDashboard"
                            style="-fx-background-color: #1A73E8;
                   -fx-text-fill: #FFFFFF;
@@ -49,12 +53,14 @@
 
         <!-- Add Account and Logout Section -->
         <VBox spacing="15" alignment="BOTTOM_CENTER" prefWidth="400.0">
-            <MFXButton text="Weiteres Konto hinzufügen"
+            <MFXButton text="Konto hinzufügen"
                        onAction="#onAddAccount"
                        style="-fx-background-color: #F1F3F4;
                               -fx-text-fill: #3C4043;
                               -fx-border-radius: 20;"/>
-            <MFXButton text="Von allen Konten abmelden"
+            <MFXButton
+                       fx:id="logoutAllBtn"
+                       text="Von allen Konten abmelden"
                        onAction="#onLogoutAll"
                        style="-fx-background-color: transparent;
                               -fx-text-fill: #1A73E8;
