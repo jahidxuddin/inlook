@@ -258,6 +258,8 @@ public class AccountController {
 
     private void logoutAllAccounts() {
         new TokenFileHandler("tokens.txt").clearTokens();
+        DataStore.getInstance().setJwtToken("");
+        DataStore.getInstance().setEmail("");
         initializeAccountListView();
     }
 

@@ -46,6 +46,7 @@
     <!-- Footer Buttons -->
     <HBox alignment="CENTER">
         <MFXButton
+                onAction="#onSave"
                 text="Speichern"
                 HBox.hgrow="ALWAYS"
                 style="-fx-background-color: #E8F0FE; -fx-text-fill: #1A73E8; -fx-font-size: 14px; -fx-padding: 10px 15px 10px 15px; -fx-border-radius: 5px;  -fx-font-weight: bold;"/>

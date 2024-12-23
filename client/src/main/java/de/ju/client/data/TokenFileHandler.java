@@ -75,4 +75,36 @@ public class TokenFileHandler {
         }
         return null;
     }
+
+    public void removeTokenByLine(int lineNumber) {
+        List<String> tokens = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            int currentLine = 1;
+            while ((line = reader.readLine()) != null) {
+                if (currentLine != lineNumber) {
+                    tokens.add(line);
+                }
+                currentLine++;
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + filePath);
+            return;
+        } catch (IOException e) {
+            System.err.println("Error reading tokens for removal: " + e.getMessage());
+            return;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (String token : tokens) {
+                if (token != null) {
+                    writer.write(token);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing tokens after removal: " + e.getMessage());
+        }
+    }
 }
