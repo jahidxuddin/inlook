@@ -10,7 +10,7 @@
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:id="overlay"
-      fx:controller="de.ju.client.controller.home.EmailDetailsController"
+      fx:controller="de.ju.client.dashboard.controller.EmailDetailsController"
       alignment="TOP_CENTER"
       prefWidth="1024.0" prefHeight="720"
 >

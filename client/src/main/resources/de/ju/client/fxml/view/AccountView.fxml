@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Text?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="de.ju.client.controller.account.AccountController"
+            fx:controller="de.ju.client.account.controller.AccountController"
             prefWidth="400.0" prefHeight="500.0"
             style="-fx-background-color: #f5f5f5;">
     <!-- Main Card -->

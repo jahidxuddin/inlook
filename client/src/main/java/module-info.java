@@ -14,12 +14,14 @@ module de.ju.client {
 
     opens de.ju.client to javafx.fxml;
     exports de.ju.client;
-    exports de.ju.client.controller.account;
-    opens de.ju.client.controller.account to javafx.fxml;
-    exports de.ju.client.controller.home;
-    opens de.ju.client.controller.home to javafx.fxml;
-    exports de.ju.client.email.client;
-    opens de.ju.client.email.client to javafx.fxml;
-    exports de.ju.client.email.util;
-    opens de.ju.client.email.util to javafx.fxml;
+    exports de.ju.client.service.email;
+    opens de.ju.client.service.email to javafx.fxml;
+    exports de.ju.client.component;
+    opens de.ju.client.component to javafx.fxml;
+    exports de.ju.client.dashboard.controller;
+    opens de.ju.client.dashboard.controller to javafx.fxml;
+    exports de.ju.client.dashboard.component;
+    opens de.ju.client.dashboard.component to javafx.fxml;
+    exports de.ju.client.account.controller;
+    opens de.ju.client.account.controller to javafx.fxml;
 }

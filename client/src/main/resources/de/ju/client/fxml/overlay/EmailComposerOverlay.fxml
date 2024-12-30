@@ -9,7 +9,7 @@
 <?import javafx.scene.control.TextArea?>
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:id="overlay"
-      fx:controller="de.ju.client.controller.home.EmailComposerController"
+      fx:controller="de.ju.client.dashboard.controller.EmailComposerController"
       alignment="TOP_CENTER"
       prefWidth="1024.0" prefHeight="720.0">
 

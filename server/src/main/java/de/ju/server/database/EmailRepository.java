@@ -1,6 +1,6 @@
 package de.ju.server.database;
 
-import de.ju.server.entities.Email;
+import de.ju.server.entity.Email;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -74,15 +74,47 @@ public class EmailRepository {
         }
     }
 
+    public void transferEmails(String oldEmail, String newEmail) {
+        String updateRecipientQuery = "UPDATE Emails SET recipient = ? WHERE recipient = ?";
+        String updateSenderQuery = "UPDATE Emails SET sender = ? WHERE sender = ?";
+
+        try (Connection connection = DatabaseConnector.getInstance().getConnection();
+             PreparedStatement updateRecipientStatement = connection.prepareStatement(updateRecipientQuery);
+             PreparedStatement updateSenderStatement = connection.prepareStatement(updateSenderQuery)) {
+
+            connection.setAutoCommit(false);
+
+            updateRecipientStatement.setString(1, newEmail);
+            updateRecipientStatement.setString(2, oldEmail);
+            updateRecipientStatement.executeUpdate();
+
+            updateSenderStatement.setString(1, newEmail);
+            updateSenderStatement.setString(2, oldEmail);
+            updateSenderStatement.executeUpdate();
+
+            connection.commit();
+        } catch (SQLException e) {
+            System.err.println("Error while transferring emails: " + e.getMessage());
+            try (Connection connection = DatabaseConnector.getInstance().getConnection()) {
+                if (connection != null && !connection.getAutoCommit()) {
+                    connection.rollback();
+                }
+            } catch (SQLException rollbackEx) {
+                System.err.println("Rollback error: " + rollbackEx.getMessage());
+            }
+            throw new RuntimeException(e);
+        }
+    }
+
     public void deleteEmail(int id) {
         String query = "DELETE FROM Emails WHERE id = ?";
         try (Connection connection = DatabaseConnector.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            connection.setAutoCommit(false); // Deaktiviert Auto-Commit für Transaktionen
-            // Setze den Parameter und führe die Query aus
+            connection.setAutoCommit(false);
+
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
-            // Commit der Transaktion
+
             connection.commit();
         } catch (SQLException e) {
             System.err.println("Fehler beim Löschen der E-Mail: " + e.getMessage());
