@@ -3,7 +3,6 @@ package de.ju.server.service.email;
 import de.ju.server.database.EmailRepository;
 import de.ju.server.database.UserRepository;
 import de.ju.server.entity.Email;
-import de.ju.server.networking.HTTPClient;
 import de.ju.server.networking.Socket;
 
 import java.io.IOException;
@@ -64,7 +63,7 @@ public class SMTPServer extends Server {
             return false;
         }
         String jwtToken = client.readLine().substring(4);
-        HttpClient httpClient = HTTPClient.getInstance();
+        HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:9000/api/v1/verify-jwt"))
                 .header("Content-Type", "application/json")

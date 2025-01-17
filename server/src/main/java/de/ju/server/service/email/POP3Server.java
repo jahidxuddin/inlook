@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.ju.server.database.EmailRepository;
 import de.ju.server.entity.Email;
 import de.ju.server.entity.User;
-import de.ju.server.networking.HTTPClient;
 import de.ju.server.networking.Socket;
 
 import java.io.IOException;
@@ -50,7 +49,7 @@ public class POP3Server extends Server {
             return null;
         }
         String jwtToken = response.substring(4);
-        HttpClient httpClient = HTTPClient.getInstance();
+        HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:9000/api/v1/find-user-by-jwt")).header("Content-Type", "application/json").header("Authorization", jwtToken).GET().build();
 
         User user = new User();
